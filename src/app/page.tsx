@@ -152,10 +152,10 @@ export default function Home() {
               className="hidden sm:block w-px h-6 md:h-8 bg-white"
             ></motion.div>
             <motion.button 
-              whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(0,0,0,0.2)" }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center gap-2 sm:gap-3 md:gap-4 bg-white rounded-full px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3 lg:px-8 lg:py-4 h-10 sm:h-12 md:h-14 lg:h-16 hover:bg-gray-100 transition-all duration-200"
+              className="btn-menu flex items-center gap-2 sm:gap-3 md:gap-4 bg-white rounded-full px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3 lg:px-8 lg:py-4 h-10 sm:h-12 md:h-14 lg:h-16"
             >
               <Menu className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-800" />
               <span className="text-gray-800 text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{
@@ -231,18 +231,18 @@ export default function Home() {
               className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6"
             >
               <motion.button 
-                whileHover={{ scale: 1.05, boxShadow: "0 15px 35px rgba(0,0,0,0.3)" }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2 }}
-                className="bg-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-lg"
+                className="btn-primary bg-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full shadow-lg"
               >
                 <span className="text-gray-800 text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif', color: 'rgb(23, 32, 35)'}}>Get in touch</span>
               </motion.button>
               <motion.button 
-                whileHover={{ scale: 1.05, backgroundColor: "white", color: "black" }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2 }}
-                className="border border-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full hover:bg-white transition-all duration-200"
+                className="btn-secondary border border-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full"
               >
                 <span className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>View Details</span>
               </motion.button>
