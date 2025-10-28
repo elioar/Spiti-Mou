@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight, Mail } from "lucide-react";
+import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight, Mail, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   useEffect(() => {
     // Enhanced smooth scrolling with custom easing
     const smoothScrollTo = (target: number, duration: number = 1000) => {
@@ -41,7 +44,8 @@ export default function Home() {
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          // Add any scroll-based animations here if needed
+          const scrollY = window.scrollY;
+          setIsScrolled(scrollY > 50);
           ticking = false;
         });
         ticking = true;
@@ -65,9 +69,12 @@ export default function Home() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="fixed top-0 left-0 right-0 z-[5] h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center py-2 sm:py-3 md:py-4 px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]"
+        className="fixed top-4 left-0 right-0 z-[9999] h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center py-2 sm:py-3 md:py-4"
       >
-        <div className="flex items-center justify-between max-w-none mx-auto w-full">
+        <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
+          <div className={`flex items-center justify-between max-w-none mx-auto w-full transition-all duration-300 ${
+            isScrolled ? 'bg-white shadow-lg rounded-2xl px-6 py-4' : ''
+          }`}>
           {/* Left side - Logo */}
           <motion.div 
             initial={{ x: -50, opacity: 0 }}
@@ -79,15 +86,21 @@ export default function Home() {
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 border-2 border-white rounded-lg flex items-center justify-center"
+              className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 border-2 rounded-lg flex items-center justify-center transition-colors duration-300 ${
+                isScrolled ? 'border-black' : 'border-white'
+              }`}
             >
-              <HomeIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
+              <HomeIcon className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-colors duration-300 ${
+                isScrolled ? 'text-black' : 'text-white'
+              }`} />
             </motion.div>
             <motion.span 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight" 
+              className={`text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight transition-colors duration-300 ${
+                isScrolled ? 'text-black' : 'text-white'
+              }`}
               style={{
                 fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
                 fontWeight: 400,
@@ -115,8 +128,12 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.5 }}
               className="hidden sm:flex items-center gap-2 md:gap-3"
             >
-              <Phone className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
-              <span className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{
+              <Phone className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-colors duration-300 ${
+                isScrolled ? 'text-black' : 'text-white'
+              }`} />
+              <span className={`text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight transition-colors duration-300 ${
+                isScrolled ? 'text-black' : 'text-white'
+              }`} style={{
                 fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
                 fontWeight: 400,
                 fontSize: '16px',
@@ -130,16 +147,25 @@ export default function Home() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              className="hidden sm:block w-px h-6 md:h-8 bg-white"
+              className={`hidden sm:block w-px h-6 md:h-8 transition-colors duration-300 ${
+                isScrolled ? 'bg-gray-400' : 'bg-white'
+              }`}
             ></motion.div>
             <motion.button 
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
-              className="btn-menu flex items-center gap-2 sm:gap-3 md:gap-4 bg-white rounded-full px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3 lg:px-8 lg:py-4 h-10 sm:h-12 md:h-14 lg:h-16"
+              onClick={() => setIsMenuOpen(true)}
+              className={`btn-menu flex items-center gap-2 sm:gap-3 md:gap-4 rounded-full px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3 lg:px-8 lg:py-4 h-10 sm:h-12 md:h-14 lg:h-16 transition-colors duration-300 ${
+                isScrolled ? 'bg-gray-200' : 'bg-white'
+              }`}
             >
-              <Menu className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-800" />
-              <span className="text-gray-800 text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{
+              <Menu className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-colors duration-300 ${
+                isScrolled ? 'text-black' : 'text-gray-800'
+              }`} />
+              <span className={`text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight transition-colors duration-300 ${
+                isScrolled ? 'text-black' : 'text-gray-800'
+              }`} style={{
                 fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
                 fontWeight: 700,
                 fontSize: '16px',
@@ -150,11 +176,107 @@ export default function Home() {
               }}>Menu</span>
             </motion.button>
           </motion.div>
+          </div>
         </div>
       </motion.header>
 
+      {/* Fullscreen Menu */}
+      {isMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-[99999] bg-black/90 backdrop-blur-sm"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="absolute inset-0 flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <motion.button
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              onClick={() => setIsMenuOpen(false)}
+              className="absolute top-8 right-8 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all duration-300 group"
+            >
+              <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform duration-300" />
+            </motion.button>
+
+            {/* Menu Content */}
+            <div className="text-center">
+              {/* Logo */}
+              <motion.div
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="mb-12"
+              >
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-12 h-12 border-2 border-white rounded-lg flex items-center justify-center">
+                    <HomeIcon className="w-8 h-8 text-white" />
+                  </div>
+                  <span className="text-white text-4xl font-semibold" style={{
+                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+                    fontWeight: 400
+                  }}>Homely</span>
+                </div>
+              </motion.div>
+
+              {/* Menu Links */}
+              <div className="space-y-6">
+                {['Home', 'Properties', 'About', 'Contact'].map((item, index) => (
+                  <motion.a
+                    key={item}
+                    href="#"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
+                    className="block text-white text-5xl font-bold hover:text-emerald-400 transition-colors duration-300 group"
+                    style={{
+                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+                      fontWeight: 700
+                    }}
+                  >
+                    <span className="inline-block group-hover:translate-x-2 transition-transform duration-300">{item}</span>
+                  </motion.a>
+                ))}
+              </div>
+
+              {/* Contact Info */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="mt-16 space-y-4"
+              >
+                <div className="flex items-center justify-center gap-3 text-white/80">
+                  <Phone className="w-5 h-5" />
+                  <span className="text-lg" style={{
+                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+                    fontWeight: 400
+                  }}>+1-212-456-7890</span>
+                </div>
+                <div className="flex items-center justify-center gap-3 text-white/80">
+                  <Mail className="w-5 h-5" />
+                  <span className="text-lg" style={{
+                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+                    fontWeight: 400
+                  }}>hello@homely.com</span>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
       {/* Hero Section */}
-      <main className="relative min-h-screen flex items-center pt-20 sm:pt-24 md:pt-28 lg:pt-32">
+      <main className="relative min-h-screen flex items-center pt-6 sm:pt-10 md:pt-14 lg:pt-18">
         {/* Background Image - Desktop */}
         <motion.div 
           initial={{ scale: 1.1, opacity: 0 }}
@@ -262,32 +384,6 @@ export default function Home() {
               </motion.button>
             </motion.div>
             
-            {/* Pagination dots */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 1.5 }}
-              className="flex gap-2 sm:gap-3"
-            >
-              <motion.div 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.3, delay: 1.6 }}
-                className="w-2 h-2 sm:w-3 sm:h-3 bg-white rounded-full"
-              ></motion.div>
-              <motion.div 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.3, delay: 1.7 }}
-                className="w-2 h-2 sm:w-3 sm:h-3 border border-white rounded-full"
-              ></motion.div>
-              <motion.div 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.3, delay: 1.8 }}
-                className="w-2 h-2 sm:w-3 sm:h-3 border border-white rounded-full"
-              ></motion.div>
-            </motion.div>
           </div>
         </div>
 
@@ -298,19 +394,12 @@ export default function Home() {
   initial={{ y: 100, opacity: 0 }}
   animate={{ y: 0, opacity: 1 }}
   transition={{ duration: 1, delay: 1.8, ease: "easeOut" }}
-  className="
-    absolute bottom-0
-    left-1/2 -translate-x-1/2 w-full
-    sm:left-0 sm:translate-x-0 sm:w-[90%]
-    md:w-[85%]
-    lg:left-auto lg:right-[60px] lg:translate-x-0 lg:w-[calc(100%-120px)]
-    xl:right-[60px] xl:left-auto xl:translate-x-0 xl:w-[calc(100%-120px)]
-    bg-white rounded-t-3xl sm:rounded-t-2xl sm:rounded-tr-none
-    shadow-2xl h-auto min-h-[130px] sm:min-h-[140px] md:min-h-[156px] z-10
-  "
->
+        className="absolute bottom-6 left-0 right-0 z-10"
+      >
+        <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
+          <div className="bg-white rounded-3xl shadow-2xl">
 
-        <div className="flex flex-col sm:flex-row items-center justify-center w-full h-full px-5 sm:px-6 md:px-8 lg:px-12 xl:px-[65px] py-6 sm:py-6 md:py-8 lg:py-10 xl:py-[45px]">
+        <div className="flex flex-col sm:flex-row items-center justify-center w-full h-full px-6 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 md:py-10">
           {/* Mobile Layout - 2x2 Grid */}
           <div className="flex flex-col sm:hidden w-full gap-4">
             {/* First Row */}
@@ -482,8 +571,10 @@ export default function Home() {
               }}>For selling price</div>
             </motion.div>
           </div>
+          </div>
         </div>
-        </motion.div>
+        </div>
+      </motion.div>
       </main>
       </div>
 
