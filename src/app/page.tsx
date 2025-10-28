@@ -4,10 +4,25 @@ import Image from "next/image";
 import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight, Mail, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import enTranslations from "@/translations/en.json";
+import esTranslations from "@/translations/es.json";
+import frTranslations from "@/translations/fr.json";
+import elTranslations from "@/translations/el.json";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'el'>('en');
+
+  // Translations
+  const translations = {
+    en: enTranslations,
+    es: esTranslations,
+    fr: frTranslations,
+    el: elTranslations,
+  };
+
+  const t = translations[language];
 
   useEffect(() => {
     // Enhanced smooth scrolling with custom easing
@@ -151,6 +166,32 @@ export default function Home() {
                 isScrolled ? 'bg-gray-400' : 'bg-white'
               }`}
             ></motion.div>
+            
+            {/* Language Selector */}
+            <motion.div 
+              initial={{ x: 50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="relative mr-3 sm:mr-4"
+            >
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => {
+                  const languages: ('en' | 'es' | 'fr' | 'el')[] = ['en', 'es', 'fr', 'el'];
+                  const currentIndex = languages.indexOf(language);
+                  setLanguage(languages[(currentIndex + 1) % languages.length]);
+                }}
+                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 transition-all duration-300 ${
+                  isScrolled ? 'border-gray-800 hover:border-black' : 'border-white/20 hover:border-white/40'
+                }`}
+              >
+                <span className="text-2xl">
+                  {language === 'en' ? '🇺🇸' : language === 'es' ? '🇪🇸' : language === 'fr' ? '🇫🇷' : '🇬🇷'}
+                </span>
+              </motion.button>
+            </motion.div>
+            
             <motion.button 
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -230,7 +271,7 @@ export default function Home() {
 
               {/* Menu Links */}
               <div className="space-y-6">
-                {['Home', 'Properties', 'About', 'Contact'].map((item, index) => (
+                {t.menuItems.map((item, index) => (
                   <motion.a
                     key={item}
                     href="#"
@@ -325,7 +366,7 @@ export default function Home() {
                 lineHeight: '1.2'
               }}
             >
-              Palm Springs, CA
+              {t.location}
             </motion.div>
             
             <motion.h1 
@@ -342,22 +383,34 @@ export default function Home() {
                 fontFeatureSettings: 'normal'
               }}
             >
-              <motion.span 
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.9 }}
-                className="block"
-              >
-                Futuristic
-              </motion.span>
-              <motion.span 
-                initial={{ x: 100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 1.1 }}
-                className="block"
-              >
-                Haven
-              </motion.span>
+              {language === 'en' ? (
+                <>
+                  <motion.span 
+                    initial={{ x: -100, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 0.9 }}
+                    className="block"
+                  >
+                    Futuristic
+                  </motion.span>
+                  <motion.span 
+                    initial={{ x: 100, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 1.1 }}
+                    className="block"
+                  >
+                    Haven
+                  </motion.span>
+                </>
+              ) : (
+                <motion.span 
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 0.9 }}
+                >
+                  {t.title}
+                </motion.span>
+              )}
             </motion.h1>
             
             <motion.div 
@@ -372,7 +425,7 @@ export default function Home() {
                 transition={{ duration: 0.2 }}
                 className="btn-primary bg-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full shadow-lg"
               >
-                <span className="text-gray-800 text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif', color: 'rgb(23, 32, 35)'}}>Get in touch</span>
+                <span className="text-gray-800 text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif', color: 'rgb(23, 32, 35)'}}>{t.getInTouch}</span>
               </motion.button>
               <motion.button 
                 whileHover={{ scale: 1.02 }}
@@ -380,7 +433,7 @@ export default function Home() {
                 transition={{ duration: 0.2 }}
                 className="btn-secondary border border-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full"
               >
-                <span className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>View Details</span>
+                <span className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>{t.viewDetails}</span>
               </motion.button>
             </motion.div>
             
