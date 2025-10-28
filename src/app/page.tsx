@@ -62,15 +62,31 @@ export default function Home() {
       transition={{ duration: 1 }}
       className="min-h-screen font-inter relative px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%] smooth-scroll"
     >
-      {/* Background Image */}
+      {/* Background Image - Desktop */}
       <motion.div 
         initial={{ scale: 1.1, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 2, ease: "easeOut" }}
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full hidden sm:block"
       >
         <Image
           src="/hero_background.avif"
+          alt="Background"
+          fill
+          className="object-cover"
+          priority
+        />
+      </motion.div>
+
+      {/* Background Image - Mobile */}
+      <motion.div 
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+        className="absolute inset-0 w-full h-full block sm:hidden"
+      >
+        <Image
+          src="/hero_background_mobile.avif"
           alt="Background"
           fill
           className="object-cover"
@@ -283,13 +299,13 @@ export default function Home() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, delay: 1.8, ease: "easeOut" }}
-        className="absolute bottom-0 right-0 w-[95%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] bg-white rounded-t-xl sm:rounded-t-2xl shadow-2xl h-auto min-h-[100px] sm:min-h-[140px] md:min-h-[156px] z-10"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full sm:left-auto sm:translate-x-0 sm:right-0 sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] bg-white rounded-t-3xl sm:rounded-t-2xl shadow-2xl h-auto min-h-[130px] sm:min-h-[140px] md:min-h-[156px] z-10"
       >
-        <div className="flex flex-col sm:flex-row items-center justify-center w-full h-full px-3 sm:px-6 md:px-8 lg:px-12 xl:px-[65px] py-4 sm:py-6 md:py-8 lg:py-10 xl:py-[45px]">
+        <div className="flex flex-col sm:flex-row items-center justify-center w-full h-full px-5 sm:px-6 md:px-8 lg:px-12 xl:px-[65px] py-6 sm:py-6 md:py-8 lg:py-10 xl:py-[45px]">
           {/* Mobile Layout - 2x2 Grid */}
-          <div className="flex flex-col sm:hidden w-full gap-3">
+          <div className="flex flex-col sm:hidden w-full gap-4">
             {/* First Row */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center gap-2">
               <motion.div 
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -297,13 +313,14 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 className="flex flex-col items-center text-center flex-1"
               >
-                <Bed className="w-5 h-5 text-gray-700 mb-1" />
-                <span className="text-gray-700 font-medium text-xs" style={{
+                <Bed className="w-6 h-6 text-gray-700 mb-2" />
+                <span className="text-gray-700 font-medium text-sm" style={{
                   fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
                   fontWeight: 500,
                   letterSpacing: '-0.25px'
                 }}>4 Bedrooms</span>
               </motion.div>
+              <div className="w-px h-10 bg-gray-300"></div>
               <motion.div 
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -311,8 +328,8 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 className="flex flex-col items-center text-center flex-1"
               >
-                <Bath className="w-5 h-5 text-gray-700 mb-1" />
-                <span className="text-gray-700 font-medium text-xs" style={{
+                <Bath className="w-6 h-6 text-gray-700 mb-2" />
+                <span className="text-gray-700 font-medium text-sm" style={{
                   fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
                   fontWeight: 500,
                   letterSpacing: '-0.25px'
@@ -321,7 +338,7 @@ export default function Home() {
             </div>
             
             {/* Second Row */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center gap-2">
               <motion.div 
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -329,13 +346,14 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 className="flex flex-col items-center text-center flex-1"
               >
-                <Car className="w-5 h-5 text-gray-700 mb-1" />
-                <span className="text-gray-700 font-medium text-xs" style={{
+                <Car className="w-6 h-6 text-gray-700 mb-2" />
+                <span className="text-gray-700 font-medium text-sm" style={{
                   fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
                   fontWeight: 500,
                   letterSpacing: '-0.25px'
                 }}>Parking</span>
               </motion.div>
+              <div className="w-px h-10 bg-gray-300"></div>
               <motion.div 
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -343,7 +361,7 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 className="flex flex-col items-center text-center flex-1"
               >
-                <div className="text-base font-bold text-gray-800 mb-0.5" style={{
+                <div className="text-lg font-bold text-gray-800 mb-1" style={{
                   fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
                   fontWeight: 700,
                   letterSpacing: '-0.5px'
