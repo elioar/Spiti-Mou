@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot } from "lucide-react";
+import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
@@ -56,43 +56,8 @@ export default function Home() {
   }, []);
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-      className="min-h-screen font-inter relative px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%] smooth-scroll"
-    >
-      {/* Background Image - Desktop */}
-      <motion.div 
-        initial={{ scale: 1.1, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 2, ease: "easeOut" }}
-        className="absolute inset-0 w-full h-full hidden sm:block"
-      >
-        <Image
-          src="/hero_background.avif"
-          alt="Background"
-          fill
-          className="object-cover"
-          priority
-        />
-      </motion.div>
-
-      {/* Background Image - Mobile */}
-      <motion.div 
-        initial={{ scale: 1.1, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 2, ease: "easeOut" }}
-        className="absolute inset-0 w-full h-full block sm:hidden"
-      >
-        <Image
-          src="/hero_background_mobile.avif"
-          alt="Background"
-          fill
-          className="object-cover"
-          priority
-        />
-      </motion.div>
+    <div className="min-h-screen font-inter smooth-scroll">
+      <div className="relative px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
 
 
       {/* Header */}
@@ -190,7 +155,40 @@ export default function Home() {
 
       {/* Hero Section */}
       <main className="relative min-h-screen flex items-center pt-20 sm:pt-24 md:pt-28 lg:pt-32">
-        <div className="w-full max-w-none mx-auto">
+        {/* Background Image - Desktop */}
+        <motion.div 
+          initial={{ scale: 1.1, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 2, ease: "easeOut" }}
+          className="absolute inset-0 left-0 right-0 w-screen h-full hidden sm:block -z-10"
+          style={{ marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}
+        >
+          <Image
+            src="/hero_background.avif"
+            alt="Background"
+            fill
+            className="object-cover"
+            priority
+          />
+        </motion.div>
+
+        {/* Background Image - Mobile */}
+        <motion.div 
+          initial={{ scale: 1.1, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 2, ease: "easeOut" }}
+          className="absolute inset-0 left-0 right-0 w-screen h-full block sm:hidden -z-10"
+          style={{ marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}
+        >
+          <Image
+            src="/hero_background_mobile.avif"
+            alt="Background"
+            fill
+            className="object-cover"
+            priority
+          />
+        </motion.div>
+        <div className="w-full max-w-none mx-auto relative z-10">
           {/* Content */}
           <div className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12">
             <motion.div 
@@ -292,15 +290,26 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
-      </main>
 
-      {/* Bottom Info Bar */}
-      <motion.div 
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1, delay: 1.8, ease: "easeOut" }}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full sm:left-auto sm:translate-x-0 sm:right-0 sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] bg-white rounded-t-3xl sm:rounded-t-2xl shadow-2xl h-auto min-h-[130px] sm:min-h-[140px] md:min-h-[156px] z-10"
-      >
+        {/* Bottom Info Bar */}
+        <motion.div
+        
+
+  initial={{ y: 100, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 1, delay: 1.8, ease: "easeOut" }}
+  className="
+    absolute bottom-0
+    left-1/2 -translate-x-1/2 w-full
+    sm:left-0 sm:translate-x-0 sm:w-[90%]
+    md:w-[85%]
+    lg:left-auto lg:right-[60px] lg:translate-x-0 lg:w-[calc(100%-120px)]
+    xl:right-[60px] xl:left-auto xl:translate-x-0 xl:w-[calc(100%-120px)]
+    bg-white rounded-t-3xl sm:rounded-t-2xl sm:rounded-tr-none
+    shadow-2xl h-auto min-h-[130px] sm:min-h-[140px] md:min-h-[156px] z-10
+  "
+>
+
         <div className="flex flex-col sm:flex-row items-center justify-center w-full h-full px-5 sm:px-6 md:px-8 lg:px-12 xl:px-[65px] py-6 sm:py-6 md:py-8 lg:py-10 xl:py-[45px]">
           {/* Mobile Layout - 2x2 Grid */}
           <div className="flex flex-col sm:hidden w-full gap-4">
@@ -474,7 +483,217 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
+        </motion.div>
+      </main>
+      </div>
+
+      {/* Properties Section */}
+<section className="relative w-full bg-white pt-20 pb-16 sm:pt-24 sm:pb-20 md:pt-32 md:pb-24 overflow-hidden z-20">
+  {/* Background Accent Line */}
+  <div className="absolute left-0 top-0 w-full h-full pointer-events-none">
+    <svg
+      viewBox="0 0 500 500"
+      className="absolute left-0 top-0 w-full h-full opacity-10 text-emerald-500"
+    >
+      <line
+        x1="0"
+        y1="500"
+        x2="500"
+        y2="0"
+        stroke="currentColor"
+        strokeWidth="1"
+      />
+    </svg>
+  </div>
+
+  <div className="relative px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+      {/* Row 1 - Left Side - Text */}
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8 }}
+        className="space-y-6"
+      >
+        <div className="flex items-center gap-2 text-emerald-600 font-medium">
+          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Categories</span>
+        </div>
+
+        <h2
+          className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
+          style={{
+            fontFamily:
+              '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+            lineHeight: "1.2",
+            letterSpacing: "-1px",
+          }}
+        >
+          Explore best properties <br className="hidden sm:block" /> with expert
+          services.
+        </h2>
+
+        <p
+          className="text-base sm:text-lg text-gray-600 max-w-md"
+          style={{
+            fontFamily:
+              '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+            lineHeight: "1.6",
+          }}
+        >
+          Discover a diverse range of premium properties, from luxurious
+          apartments to spacious villas, tailored to your needs.
+        </p>
+
+        <button className="px-6 py-3 bg-emerald-500 text-white font-semibold rounded-full shadow hover:bg-emerald-600 transition">
+          View Properties
+        </button>
       </motion.div>
+
+      {/* Row 1 - Right Side - Image */}
+      <motion.div
+        initial={{ opacity: 0, x: 50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, margin: "200px" }}
+        transition={{ duration: 0.8 }}
+        className="group relative cursor-pointer"
+      >
+        <img
+          src="/house_01.avif"
+          alt="Modern Houses"
+          className="w-full h-[300px] sm:h-[350px] lg:h-[400px] object-cover rounded-2xl"
+        />
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex flex-col justify-between p-6" style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%)'
+        }}>
+          {/* Top Right Button */}
+          <div className="flex justify-end">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <ArrowRight className="w-6 h-6 text-black" />
+            </div>
+          </div>
+          {/* Bottom Left Text */}
+          <div className="text-white">
+            <h3 className="text-2xl font-bold mb-2" style={{
+              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+              fontWeight: 700
+            }}>Luxury Villas</h3>
+            <p className="text-sm opacity-90" style={{
+              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+              fontWeight: 400
+            }}>Discover our curated collection of exceptional properties designed for modern living.</p>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+
+    {/* Row 2 - Three Images */}
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mt-12"
+    >
+      {/* First Image - A Little Bigger */}
+      <div className="sm:col-span-1 group relative cursor-pointer">
+        <img
+          src="/house_01.avif"
+          alt="Modern Villa"
+          className="w-full h-[200px] sm:h-[230px] lg:h-[250px] object-cover rounded-2xl"
+        />
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex flex-col justify-between p-6" style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%)'
+        }}>
+          {/* Top Right Button */}
+          <div className="flex justify-end">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <ArrowRight className="w-6 h-6 text-black" />
+            </div>
+          </div>
+          {/* Bottom Left Text */}
+          <div className="text-white">
+            <h3 className="text-2xl font-bold mb-2" style={{
+              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+              fontWeight: 700
+            }}>Office Spaces</h3>
+            <p className="text-sm opacity-90" style={{
+              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+              fontWeight: 400
+            }}>Experience elegance and comfort with our exclusive luxury villas, designed for sophisticated living.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Second Image */}
+      <div className="sm:col-span-1 group relative cursor-pointer">
+        <img
+          src="/house_01.avif"
+          alt="Apartment Building"
+          className="w-full h-[200px] sm:h-[230px] lg:h-[250px] object-cover rounded-2xl"
+        />
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex flex-col justify-between p-6" style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%)'
+        }}>
+          {/* Top Right Button */}
+          <div className="flex justify-end">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <ArrowRight className="w-6 h-6 text-black" />
+            </div>
+          </div>
+          {/* Bottom Left Text */}
+          <div className="text-white">
+            <h3 className="text-2xl font-bold mb-2" style={{
+              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+              fontWeight: 700
+            }}>Apartments</h3>
+            <p className="text-sm opacity-90" style={{
+              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+              fontWeight: 400
+            }}>Discover contemporary urban living spaces with stunning views and premium amenities.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Third Image */}
+      <div className="sm:col-span-1 group relative cursor-pointer">
+        <img
+          src="/house_01.avif"
+          alt="Interior Office"
+          className="w-full h-[200px] sm:h-[230px] lg:h-[250px] object-cover rounded-2xl"
+        />
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex flex-col justify-between p-6" style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%)'
+        }}>
+          {/* Top Right Button */}
+          <div className="flex justify-end">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <ArrowRight className="w-6 h-6 text-black" />
+            </div>
+          </div>
+          {/* Bottom Left Text */}
+          <div className="text-white">
+            <h3 className="text-2xl font-bold mb-2" style={{
+              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+              fontWeight: 700
+            }}>Residential Homes</h3>
+            <p className="text-sm opacity-90" style={{
+              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+              fontWeight: 400
+            }}>Sophisticated interiors and innovative design come together in our premium living spaces.</p>
+          </div>
+        </div>
+      </div>
     </motion.div>
+  </div>
+</section>
+        
+
+    </div>
   );
 }
