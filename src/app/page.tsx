@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight, Mail, X } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import enTranslations from "@/translations/en.json";
 import esTranslations from "@/translations/es.json";
@@ -13,6 +13,7 @@ export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'el'>('en');
+  const [isChangingLang, setIsChangingLang] = useState(false);
 
   // Translations
   const translations = {
@@ -180,15 +181,34 @@ export default function Home() {
                 onClick={() => {
                   const languages: ('en' | 'es' | 'fr' | 'el')[] = ['en', 'es', 'fr', 'el'];
                   const currentIndex = languages.indexOf(language);
-                  setLanguage(languages[(currentIndex + 1) % languages.length]);
+                  const nextLang = languages[(currentIndex + 1) % languages.length];
+                  
+                  // Animate language change
+                  setIsChangingLang(true);
+                  setTimeout(() => {
+                    setLanguage(nextLang);
+                    setTimeout(() => {
+                      setIsChangingLang(false);
+                    }, 150);
+                  }, 150);
                 }}
                 className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 transition-all duration-300 ${
                   isScrolled ? 'border-gray-800 hover:border-black' : 'border-white/20 hover:border-white/40'
                 }`}
               >
-                <span className="text-2xl">
-                  {language === 'en' ? '🇺🇸' : language === 'es' ? '🇪🇸' : language === 'fr' ? '🇫🇷' : '🇬🇷'}
-                </span>
+                <motion.span 
+                  key={language}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-sm font-semibold uppercase" 
+                  style={{
+                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
+                    fontWeight: 600
+                  }}
+                >
+                  {language.toUpperCase()}
+                </motion.span>
               </motion.button>
             </motion.div>
             
@@ -365,11 +385,19 @@ export default function Home() {
                 letterSpacing: '-0.5px',
                 lineHeight: '1.2'
               }}
-            >
-              {t.location}
+              >
+              <motion.span
+                key={language}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {t.location}
+              </motion.span>
             </motion.div>
             
-            <motion.h1 
+            <motion.h1
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.7 }}
@@ -404,9 +432,11 @@ export default function Home() {
                 </>
               ) : (
                 <motion.span 
-                  initial={{ y: 50, opacity: 0 }}
+                  key={language}
+                  initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.9 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
                 >
                   {t.title}
                 </motion.span>
@@ -425,7 +455,17 @@ export default function Home() {
                 transition={{ duration: 0.2 }}
                 className="btn-primary bg-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full shadow-lg"
               >
-                <span className="text-gray-800 text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif', color: 'rgb(23, 32, 35)'}}>{t.getInTouch}</span>
+                <motion.span 
+                  key={`getInTouch-${language}`}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-gray-800 text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" 
+                  style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif', color: 'rgb(23, 32, 35)'}}
+                >
+                  {t.getInTouch}
+                </motion.span>
               </motion.button>
               <motion.button 
                 whileHover={{ scale: 1.02 }}
@@ -433,7 +473,17 @@ export default function Home() {
                 transition={{ duration: 0.2 }}
                 className="btn-secondary border border-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full"
               >
-                <span className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>{t.viewDetails}</span>
+                <motion.span 
+                  key={`viewDetails-${language}`}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" 
+                  style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}
+                >
+                  {t.viewDetails}
+                </motion.span>
               </motion.button>
             </motion.div>
             
