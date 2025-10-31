@@ -2,18 +2,23 @@
 
 import Image from "next/image";
 import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight, Mail, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import enTranslations from "@/translations/en.json";
 import esTranslations from "@/translations/es.json";
 import frTranslations from "@/translations/fr.json";
 import elTranslations from "@/translations/el.json";
 
+declare global {
+  interface Window {
+    smoothScrollTo?: (target: number, duration?: number) => void;
+  }
+}
+
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'el'>('en');
-  const [isChangingLang, setIsChangingLang] = useState(false);
 
   // Translations
   const translations = {
@@ -53,7 +58,7 @@ export default function Home() {
     };
 
     // Add smooth scroll to window
-    (window as any).smoothScrollTo = smoothScrollTo;
+    window.smoothScrollTo = smoothScrollTo;
 
     // Enhanced scroll event with throttling
     let ticking = false;
@@ -76,16 +81,16 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen font-inter smooth-scroll">
+    <div className="min-h-screen smooth-scroll font-bricolage">
       <div className="relative px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
 
 
       {/* Header */}
-      <motion.header 
+      <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="fixed top-4 left-0 right-0 z-[9999] h-20 sm:h-24 md:h-28 lg:h-32 flex items-center justify-center py-2 sm:py-3 md:py-4"
+        className="fixed top-4 left-0 right-0 z-[9999] flex h-20 items-center justify-center py-2 sm:h-24 sm:py-3 md:h-28 md:py-4 lg:h-32"
       >
         <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
           <div className={`flex items-center justify-between max-w-none mx-auto w-full transition-all duration-300 ${
@@ -110,22 +115,13 @@ export default function Home() {
                 isScrolled ? 'text-black' : 'text-white'
               }`} />
             </motion.div>
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className={`text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight transition-colors duration-300 ${
+              className={`text-base font-semibold tracking-tight transition-colors duration-300 sm:text-xl md:text-2xl lg:text-3xl ${
                 isScrolled ? 'text-black' : 'text-white'
               }`}
-              style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 400,
-                fontSize: '16px',
-                letterSpacing: '0px',
-                lineHeight: '22px',
-                fontFeatureSettings: 'normal',
-                fontStyle: 'normal'
-              }}
             >
               Homely
             </motion.span>
@@ -147,17 +143,13 @@ export default function Home() {
               <Phone className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-colors duration-300 ${
                 isScrolled ? 'text-black' : 'text-white'
               }`} />
-              <span className={`text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight transition-colors duration-300 ${
-                isScrolled ? 'text-black' : 'text-white'
-              }`} style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 400,
-                fontSize: '16px',
-                letterSpacing: '0px',
-                lineHeight: '22px',
-                fontFeatureSettings: 'normal',
-                fontStyle: 'normal'
-              }}>+1-212-456-7890</span>
+              <span
+                className={`text-sm font-medium tracking-tight transition-colors duration-300 sm:text-base md:text-lg lg:text-xl ${
+                  isScrolled ? 'text-black' : 'text-white'
+                }`}
+              >
+                +1-212-456-7890
+              </span>
             </motion.div>
             <motion.div 
               initial={{ scaleX: 0 }}
@@ -182,30 +174,18 @@ export default function Home() {
                   const languages: ('en' | 'es' | 'fr' | 'el')[] = ['en', 'es', 'fr', 'el'];
                   const currentIndex = languages.indexOf(language);
                   const nextLang = languages[(currentIndex + 1) % languages.length];
-                  
-                  // Animate language change
-                  setIsChangingLang(true);
-                  setTimeout(() => {
-                    setLanguage(nextLang);
-                    setTimeout(() => {
-                      setIsChangingLang(false);
-                    }, 150);
-                  }, 150);
+                  setLanguage(nextLang);
                 }}
                 className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 transition-all duration-300 ${
                   isScrolled ? 'border-gray-800 hover:border-black' : 'border-white/20 hover:border-white/40'
                 }`}
               >
-                <motion.span 
+                <motion.span
                   key={language}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="text-sm font-semibold uppercase" 
-                  style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 600
-                  }}
+                  className="text-sm font-semibold uppercase"
                 >
                   {language.toUpperCase()}
                 </motion.span>
@@ -224,17 +204,13 @@ export default function Home() {
               <Menu className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-colors duration-300 ${
                 isScrolled ? 'text-black' : 'text-gray-800'
               }`} />
-              <span className={`text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight transition-colors duration-300 ${
-                isScrolled ? 'text-black' : 'text-gray-800'
-              }`} style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 700,
-                fontSize: '16px',
-                letterSpacing: '0px',
-                lineHeight: '22px',
-                fontFeatureSettings: 'normal',
-                fontStyle: 'normal'
-              }}>Menu</span>
+              <span
+                className={`text-sm font-semibold tracking-tight transition-colors duration-300 sm:text-base md:text-lg lg:text-xl ${
+                  isScrolled ? 'text-black' : 'text-gray-800'
+                }`}
+              >
+                Menu
+              </span>
             </motion.button>
           </motion.div>
           </div>
@@ -282,10 +258,7 @@ export default function Home() {
                   <div className="w-12 h-12 border-2 border-white rounded-lg flex items-center justify-center">
                     <HomeIcon className="w-8 h-8 text-white" />
                   </div>
-                  <span className="text-white text-4xl font-semibold" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>Homely</span>
+                  <span className="text-white text-4xl font-semibold">Homely</span>
                 </div>
               </motion.div>
 
@@ -299,10 +272,7 @@ export default function Home() {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
                     className="block text-white text-5xl font-bold hover:text-emerald-400 transition-colors duration-300 group"
-                    style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 700
-                    }}
+                    
                   >
                     <span className="inline-block group-hover:translate-x-2 transition-transform duration-300">{item}</span>
                   </motion.a>
@@ -318,17 +288,11 @@ export default function Home() {
               >
                 <div className="flex items-center justify-center gap-3 text-white/80">
                   <Phone className="w-5 h-5" />
-                  <span className="text-lg" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>+1-212-456-7890</span>
+                  <span className="text-lg">+1-212-456-7890</span>
                 </div>
                 <div className="flex items-center justify-center gap-3 text-white/80">
                   <Mail className="w-5 h-5" />
-                  <span className="text-lg" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>hello@homely.com</span>
+                  <span className="text-lg">hello@homely.com</span>
                 </div>
               </motion.div>
             </div>
@@ -379,12 +343,7 @@ export default function Home() {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
               className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" 
-              style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 600,
-                letterSpacing: '-0.5px',
-                lineHeight: '1.2'
-              }}
+              
               >
               <motion.span
                 key={language}
@@ -401,15 +360,7 @@ export default function Home() {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.7 }}
-              className="font-bold text-white leading-tight text-4xl sm:text-5xl md:text-6xl lg:text-[85px] xl:text-[85px]" 
-              style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 600,
-                letterSpacing: '-4px',
-                lineHeight: '85px',
-                fontSize: '85px',
-                fontFeatureSettings: 'normal'
-              }}
+              className="text-balance font-bold text-white tracking-tight text-4xl leading-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.3rem]"
             >
               {language === 'en' ? (
                 <>
@@ -431,12 +382,13 @@ export default function Home() {
                   </motion.span>
                 </>
               ) : (
-                <motion.span 
+                <motion.span
                   key={language}
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -20, opacity: 0 }}
                   transition={{ duration: 0.3 }}
+                  className="block"
                 >
                   {t.title}
                 </motion.span>
@@ -455,14 +407,13 @@ export default function Home() {
                 transition={{ duration: 0.2 }}
                 className="btn-primary bg-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full shadow-lg"
               >
-                <motion.span 
+                <motion.span
                   key={`getInTouch-${language}`}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   transition={{ duration: 0.3 }}
-                  className="text-gray-800 text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" 
-                  style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif', color: 'rgb(23, 32, 35)'}}
+                  className="text-gray-800 text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight"
                 >
                   {t.getInTouch}
                 </motion.span>
@@ -473,14 +424,13 @@ export default function Home() {
                 transition={{ duration: 0.2 }}
                 className="btn-secondary border border-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full"
               >
-                <motion.span 
+                <motion.span
                   key={`viewDetails-${language}`}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   transition={{ duration: 0.3 }}
-                  className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" 
-                  style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}
+                  className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight"
                 >
                   {t.viewDetails}
                 </motion.span>
@@ -492,192 +442,129 @@ export default function Home() {
 
         {/* Bottom Info Bar */}
         <motion.div
-        
-
-  initial={{ y: 100, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{ duration: 1, delay: 1.8, ease: "easeOut" }}
-        className="absolute bottom-6 left-0 right-0 z-10"
-      >
-        <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
-          <div className="bg-white rounded-3xl shadow-2xl">
-
-        <div className="flex flex-col sm:flex-row items-center justify-center w-full h-full px-6 sm:px-8 md:px-10 lg:px-12 py-6 sm:py-8 md:py-10">
-          {/* Mobile Layout - 2x2 Grid */}
-          <div className="flex flex-col sm:hidden w-full gap-4">
-            {/* First Row */}
-            <div className="flex justify-between items-center gap-2">
-              <motion.div 
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 2.0 }}
-                whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center text-center flex-1"
-              >
-                <Bed className="w-6 h-6 text-gray-700 mb-2" />
-                <span className="text-gray-700 font-medium text-sm" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 500,
-                  letterSpacing: '-0.25px'
-                }}>4 Bedrooms</span>
-              </motion.div>
-              <div className="w-px h-10 bg-gray-300"></div>
-              <motion.div 
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 2.1 }}
-                whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center text-center flex-1"
-              >
-                <Bath className="w-6 h-6 text-gray-700 mb-2" />
-                <span className="text-gray-700 font-medium text-sm" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 500,
-                  letterSpacing: '-0.25px'
-                }}>4 Bathrooms</span>
-              </motion.div>
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1, delay: 1.8, ease: "easeOut" }}
+          className="absolute bottom-6 left-0 right-0 z-10"
+        >
+          <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
+            <div className="rounded-3xl bg-white shadow-2xl">
+              <div className="flex w-full flex-col items-center justify-center px-6 py-6 sm:flex-row sm:px-8 sm:py-8 md:px-10 md:py-10 lg:px-12">
+                <div className="flex w-full flex-col gap-4 sm:hidden">
+                  <div className="flex items-center gap-2">
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 2.0 }}
+                      whileHover={{ scale: 1.05 }}
+                      className="flex flex-1 flex-col items-center text-center"
+                    >
+                      <Bed className="mb-2 h-6 w-6 text-gray-700" />
+                      <span className="text-sm font-medium text-gray-700">4 Bedrooms</span>
+                    </motion.div>
+                    <div className="h-10 w-px bg-gray-300" />
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 2.1 }}
+                      whileHover={{ scale: 1.05 }}
+                      className="flex flex-1 flex-col items-center text-center"
+                    >
+                      <Bath className="mb-2 h-6 w-6 text-gray-700" />
+                      <span className="text-sm font-medium text-gray-700">4 Bathrooms</span>
+                    </motion.div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 2.2 }}
+                      whileHover={{ scale: 1.05 }}
+                      className="flex flex-1 flex-col items-center text-center"
+                    >
+                      <Car className="mb-2 h-6 w-6 text-gray-700" />
+                      <span className="text-sm font-medium text-gray-700">Parking</span>
+                    </motion.div>
+                    <div className="h-10 w-px bg-gray-300" />
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 2.3 }}
+                      whileHover={{ scale: 1.05 }}
+                      className="flex flex-1 flex-col items-center text-center"
+                    >
+                      <div className="text-lg font-bold text-gray-800">$4,750,000</div>
+                      <div className="text-xs text-gray-500">For selling</div>
+                    </motion.div>
+                  </div>
+                </div>
+                <div className="hidden w-full flex-row items-center gap-6 sm:flex md:gap-8 lg:gap-10 xl:gap-[50px]">
+                  <motion.div
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 2.0 }}
+                    className="flex flex-1 flex-col items-center text-center"
+                  >
+                    <Bed className="mb-2 h-7 w-7 text-gray-700 md:h-8 md:w-8" />
+                    <span className="text-base font-medium text-gray-700 md:text-lg">4 Bedrooms</span>
+                  </motion.div>
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.5, delay: 2.1 }}
+                    className="h-8 w-px bg-gray-300 md:h-10 lg:h-12"
+                  ></motion.div>
+                  <motion.div
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 2.2 }}
+                    className="flex flex-1 flex-col items-center text-center"
+                  >
+                    <Bath className="mb-2 h-7 w-7 text-gray-700 md:h-8 md:w-8" />
+                    <span className="text-base font-medium text-gray-700 md:text-lg">4 Bathrooms</span>
+                  </motion.div>
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.5, delay: 2.3 }}
+                    className="h-8 w-px bg-gray-300 md:h-10 lg:h-12"
+                  ></motion.div>
+                  <motion.div
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 2.4 }}
+                    className="flex flex-1 flex-col items-center text-center"
+                  >
+                    <Car className="mb-2 h-7 w-7 text-gray-700 md:h-8 md:w-8" />
+                    <span className="text-base font-medium text-gray-700 md:text-lg">Parking space</span>
+                  </motion.div>
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.5, delay: 2.5 }}
+                    className="h-8 w-px bg-gray-300 md:h-10 lg:h-12"
+                  ></motion.div>
+                  <motion.div
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 2.6 }}
+                    className="flex flex-1 flex-col items-center text-center"
+                  >
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.5, delay: 2.7 }}
+                      className="text-2xl font-bold text-gray-800 md:text-3xl"
+                    >
+                      $4,750,000
+                    </motion.div>
+                    <div className="text-sm text-gray-500">For selling price</div>
+                  </motion.div>
+                </div>
+              </div>
             </div>
-            
-            {/* Second Row */}
-            <div className="flex justify-between items-center gap-2">
-              <motion.div 
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 2.2 }}
-                whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center text-center flex-1"
-              >
-                <Car className="w-6 h-6 text-gray-700 mb-2" />
-                <span className="text-gray-700 font-medium text-sm" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 500,
-                  letterSpacing: '-0.25px'
-                }}>Parking</span>
-              </motion.div>
-              <div className="w-px h-10 bg-gray-300"></div>
-              <motion.div 
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 2.3 }}
-                whileHover={{ scale: 1.05 }}
-                className="flex flex-col items-center text-center flex-1"
-              >
-                <div className="text-lg font-bold text-gray-800 mb-1" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 700,
-                  letterSpacing: '-0.5px'
-                }}>$4,750,000</div>
-                <div className="text-xs text-gray-500" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 400,
-                  letterSpacing: '-0.25px'
-                }}>For selling</div>
-              </motion.div>
-            </div>
           </div>
-
-          {/* Desktop Layout - Horizontal */}
-          <div className="hidden sm:flex flex-row items-center w-full gap-6 md:gap-8 lg:gap-10 xl:gap-[50px]">
-            {/* Bedrooms */}
-            <motion.div 
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 2.0 }}
-              className="flex flex-col items-center text-center flex-1"
-            >
-              <Bed className="w-7 h-7 md:w-8 md:h-8 text-gray-700 mb-2" />
-              <span className="text-gray-700 font-medium text-base md:text-lg" style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 500,
-                letterSpacing: '-0.5px'
-              }}>4 Bedrooms</span>
-            </motion.div>
-            
-            {/* Divider */}
-            <motion.div 
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.5, delay: 2.1 }}
-              className="w-px h-8 md:h-10 lg:h-12 bg-gray-300"
-            ></motion.div>
-            
-            {/* Bathrooms */}
-            <motion.div 
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 2.2 }}
-              className="flex flex-col items-center text-center flex-1"
-            >
-              <Bath className="w-7 h-7 md:w-8 md:h-8 text-gray-700 mb-2" />
-              <span className="text-gray-700 font-medium text-base md:text-lg" style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 500,
-                letterSpacing: '-0.5px'
-              }}>4 Bathrooms</span>
-            </motion.div>
-            
-            {/* Divider */}
-            <motion.div 
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.5, delay: 2.3 }}
-              className="w-px h-8 md:h-10 lg:h-12 bg-gray-300"
-            ></motion.div>
-            
-            {/* Parking */}
-            <motion.div 
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 2.4 }}
-              className="flex flex-col items-center text-center flex-1"
-            >
-              <Car className="w-7 h-7 md:w-8 md:h-8 text-gray-700 mb-2" />
-              <span className="text-gray-700 font-medium text-base md:text-lg" style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 500,
-                letterSpacing: '-0.5px'
-              }}>Parking space</span>
-            </motion.div>
-            
-            {/* Divider */}
-            <motion.div 
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.5, delay: 2.5 }}
-              className="w-px h-8 md:h-10 lg:h-12 bg-gray-300"
-            ></motion.div>
-            
-            {/* Price */}
-            <motion.div 
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 2.6 }}
-              className="flex flex-col items-center text-center flex-1"
-            >
-              <motion.div 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.5, delay: 2.7 }}
-                className="text-2xl md:text-3xl font-bold text-gray-800" 
-                style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 700,
-                  letterSpacing: '-1px'
-                }}
-              >
-                $4,750,000
-              </motion.div>
-              <div className="text-sm text-gray-500" style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 400,
-                letterSpacing: '-0.25px'
-              }}>For selling price</div>
-            </motion.div>
-          </div>
-          </div>
-        </div>
-        </div>
-      </motion.div>
+        </motion.div>
       </main>
       </div>
 
@@ -716,25 +603,14 @@ export default function Home() {
         </div>
 
         <h2
-          className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
-          style={{
-            fontFamily:
-              '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-            lineHeight: "1.2",
-            letterSpacing: "-1px",
-          }}
+          className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight tracking-tight"
         >
           Explore best properties <br className="hidden sm:block" /> with expert
           services.
         </h2>
 
         <p
-          className="text-base sm:text-lg text-gray-600 max-w-md"
-          style={{
-            fontFamily:
-              '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-            lineHeight: "1.6",
-          }}
+          className="text-base sm:text-lg text-gray-600 max-w-md leading-relaxed"
         >
           Discover a diverse range of premium properties, from luxurious
           apartments to spacious villas, tailored to your needs.
@@ -753,11 +629,15 @@ export default function Home() {
         transition={{ duration: 0.8 }}
         className="group relative cursor-pointer"
       >
-        <img
-          src="/house_01.avif"
-          alt="Modern Houses"
-          className="w-full h-[300px] sm:h-[350px] lg:h-[400px] object-cover rounded-2xl"
-        />
+        <div className="relative h-[300px] w-full overflow-hidden rounded-2xl sm:h-[350px] lg:h-[400px]">
+          <Image
+            src="/house_01.avif"
+            alt="Modern Houses"
+            fill
+            className="object-cover"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+          />
+        </div>
         {/* Hover Overlay */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex flex-col justify-between p-6" style={{
           background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%)'
@@ -770,14 +650,8 @@ export default function Home() {
           </div>
           {/* Bottom Left Text */}
           <div className="text-white">
-            <h3 className="text-2xl font-bold mb-2" style={{
-              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-              fontWeight: 700
-            }}>Luxury Villas</h3>
-            <p className="text-sm opacity-90" style={{
-              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-              fontWeight: 400
-            }}>Discover our curated collection of exceptional properties designed for modern living.</p>
+            <h3 className="text-2xl font-bold mb-2">Luxury Villas</h3>
+            <p className="text-sm opacity-90">Discover our curated collection of exceptional properties designed for modern living.</p>
           </div>
         </div>
       </motion.div>
@@ -793,11 +667,15 @@ export default function Home() {
     >
       {/* First Image - A Little Bigger */}
       <div className="sm:col-span-1 group relative cursor-pointer">
-        <img
-          src="/house_01.avif"
-          alt="Modern Villa"
-          className="w-full h-[200px] sm:h-[230px] lg:h-[250px] object-cover rounded-2xl"
-        />
+        <div className="relative h-[200px] w-full overflow-hidden rounded-2xl sm:h-[230px] lg:h-[250px]">
+          <Image
+            src="/house_01.avif"
+            alt="Modern Villa"
+            fill
+            className="object-cover"
+            sizes="(min-width: 1024px) 30vw, 100vw"
+          />
+        </div>
         {/* Hover Overlay */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex flex-col justify-between p-6" style={{
           background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%)'
@@ -810,25 +688,23 @@ export default function Home() {
           </div>
           {/* Bottom Left Text */}
           <div className="text-white">
-            <h3 className="text-2xl font-bold mb-2" style={{
-              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-              fontWeight: 700
-            }}>Office Spaces</h3>
-            <p className="text-sm opacity-90" style={{
-              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-              fontWeight: 400
-            }}>Experience elegance and comfort with our exclusive luxury villas, designed for sophisticated living.</p>
+            <h3 className="text-2xl font-bold mb-2">Office Spaces</h3>
+            <p className="text-sm opacity-90">Experience elegance and comfort with our exclusive luxury villas, designed for sophisticated living.</p>
           </div>
         </div>
       </div>
 
       {/* Second Image */}
       <div className="sm:col-span-1 group relative cursor-pointer">
-        <img
-          src="/house_01.avif"
-          alt="Apartment Building"
-          className="w-full h-[200px] sm:h-[230px] lg:h-[250px] object-cover rounded-2xl"
-        />
+        <div className="relative h-[200px] w-full overflow-hidden rounded-2xl sm:h-[230px] lg:h-[250px]">
+          <Image
+            src="/house_01.avif"
+            alt="Apartment Building"
+            fill
+            className="object-cover"
+            sizes="(min-width: 1024px) 30vw, 100vw"
+          />
+        </div>
         {/* Hover Overlay */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex flex-col justify-between p-6" style={{
           background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%)'
@@ -841,25 +717,23 @@ export default function Home() {
           </div>
           {/* Bottom Left Text */}
           <div className="text-white">
-            <h3 className="text-2xl font-bold mb-2" style={{
-              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-              fontWeight: 700
-            }}>Apartments</h3>
-            <p className="text-sm opacity-90" style={{
-              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-              fontWeight: 400
-            }}>Discover contemporary urban living spaces with stunning views and premium amenities.</p>
+            <h3 className="text-2xl font-bold mb-2">Apartments</h3>
+            <p className="text-sm opacity-90">Discover contemporary urban living spaces with stunning views and premium amenities.</p>
           </div>
         </div>
       </div>
 
       {/* Third Image */}
       <div className="sm:col-span-1 group relative cursor-pointer">
-        <img
-          src="/house_01.avif"
-          alt="Interior Office"
-          className="w-full h-[200px] sm:h-[230px] lg:h-[250px] object-cover rounded-2xl"
-        />
+        <div className="relative h-[200px] w-full overflow-hidden rounded-2xl sm:h-[230px] lg:h-[250px]">
+          <Image
+            src="/house_01.avif"
+            alt="Interior Office"
+            fill
+            className="object-cover"
+            sizes="(min-width: 1024px) 30vw, 100vw"
+          />
+        </div>
         {/* Hover Overlay */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex flex-col justify-between p-6" style={{
           background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%)'
@@ -872,14 +746,8 @@ export default function Home() {
           </div>
           {/* Bottom Left Text */}
           <div className="text-white">
-            <h3 className="text-2xl font-bold mb-2" style={{
-              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-              fontWeight: 700
-            }}>Residential Homes</h3>
-            <p className="text-sm opacity-90" style={{
-              fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-              fontWeight: 400
-            }}>Sophisticated interiors and innovative design come together in our premium living spaces.</p>
+            <h3 className="text-2xl font-bold mb-2">Residential Homes</h3>
+            <p className="text-sm opacity-90">Sophisticated interiors and innovative design come together in our premium living spaces.</p>
           </div>
         </div>
       </div>
@@ -904,22 +772,13 @@ export default function Home() {
             </div>
             
             <h2
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4"
-              style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                lineHeight: "1.2",
-                letterSpacing: "-1px",
-              }}
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight tracking-tight"
             >
               Discover inspiring designed homes.
             </h2>
             
             <p
-              className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto"
-              style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                lineHeight: "1.6",
-              }}
+              className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed"
             >
               Curated homes where elegance, style, and comfort unite.
             </p>
@@ -939,42 +798,37 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 h-[500px] flex flex-col"
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <img
-                src="/house_01.avif"
-                alt="Serenity height villas"
-                className="w-full h-[320px] object-cover rounded-t-2xl"
-              />
+              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+                <Image
+                  src="/house_01.avif"
+                  alt="Serenity height villas"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
+                />
+              </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 700
-                    }}>Serenity height villas</h3>
-                    <p className="text-sm text-gray-500" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 400
-                    }}>15 S Aurora Ave, Miami</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Serenity height villas</h3>
+                    <p className="text-sm text-gray-500">15 S Aurora Ave, Miami</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 600
-                  }}>$570,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$570,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>4 Bedrooms</span>
+                    <span>4 Bedrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>3 Bathrooms</span>
+                    <span>3 Bathrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>120m²</span>
+                    <span>120m²</span>
                   </div>
                 </div>
               </div>
@@ -986,42 +840,37 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 h-[500px] flex flex-col"
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <img
-                src="/house_01.avif"
-                alt="Mountain Retreat Villa"
-                className="w-full h-[320px] object-cover rounded-t-2xl"
-              />
+              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+                <Image
+                  src="/house_01.avif"
+                  alt="Mountain Retreat Villa"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
+                />
+              </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 700
-                    }}>Mountain Retreat Villa</h3>
-                    <p className="text-sm text-gray-500" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 400
-                    }}>18 S Aurora Ave, Miami</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Mountain Retreat Villa</h3>
+                    <p className="text-sm text-gray-500">18 S Aurora Ave, Miami</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 600
-                  }}>$575,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$575,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>5 Bedrooms</span>
+                    <span>5 Bedrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>2 Bathrooms</span>
+                    <span>2 Bathrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>150m²</span>
+                    <span>150m²</span>
                   </div>
                 </div>
               </div>
@@ -1033,42 +882,37 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 h-[500px] flex flex-col"
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <img
-                src="/house_01.avif"
-                alt="Vista Grand"
-                className="w-full h-[320px] object-cover rounded-t-2xl"
-              />
+              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+                <Image
+                  src="/house_01.avif"
+                  alt="Vista Grand"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
+                />
+              </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 700
-                    }}>Vista Grand</h3>
-                    <p className="text-sm text-gray-500" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 400
-                    }}>Modern Luxe Villa</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Vista Grand</h3>
+                    <p className="text-sm text-gray-500">Modern Luxe Villa</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 600
-                  }}>$580,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$580,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>3 Bedrooms</span>
+                    <span>3 Bedrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>4 Bathrooms</span>
+                    <span>4 Bathrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>180m²</span>
+                    <span>180m²</span>
                   </div>
                 </div>
               </div>
@@ -1080,42 +924,37 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 h-[500px] flex flex-col"
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <img
-                src="/house_01.avif"
-                alt="Maplewood Residence"
-                className="w-full h-[320px] object-cover rounded-t-2xl"
-              />
+              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+                <Image
+                  src="/house_01.avif"
+                  alt="Maplewood Residence"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
+                />
+              </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 700
-                    }}>Maplewood Residence</h3>
-                    <p className="text-sm text-gray-500" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 400
-                    }}>12 Emerald Heights, Los Angeles</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Maplewood Residence</h3>
+                    <p className="text-sm text-gray-500">12 Emerald Heights, Los Angeles</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 600
-                  }}>$590,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$590,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>6 Bedrooms</span>
+                    <span>6 Bedrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>3 Bathrooms</span>
+                    <span>3 Bathrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>200m²</span>
+                    <span>200m²</span>
                   </div>
                 </div>
               </div>
@@ -1127,42 +966,37 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 h-[500px] flex flex-col"
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <img
-                src="/house_01.avif"
-                alt="Whispering Pines"
-                className="w-full h-[320px] object-cover rounded-t-2xl"
-              />
+              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+                <Image
+                  src="/house_01.avif"
+                  alt="Whispering Pines"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
+                />
+              </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 700
-                    }}>Whispering Pines</h3>
-                    <p className="text-sm text-gray-500" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 400
-                    }}>25 Skyline Boulevard, San Diego</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Whispering Pines</h3>
+                    <p className="text-sm text-gray-500">25 Skyline Boulevard, San Diego</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 600
-                  }}>$710,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$710,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>2 Bedrooms</span>
+                    <span>2 Bedrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>1 Bathroom</span>
+                    <span>1 Bathroom</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>90m²</span>
+                    <span>90m²</span>
                   </div>
                 </div>
               </div>
@@ -1174,42 +1008,37 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 h-[500px] flex flex-col"
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <img
-                src="/house_01.avif"
-                alt="The Catalyst Center"
-                className="w-full h-[320px] object-cover rounded-t-2xl"
-              />
+              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+                <Image
+                  src="/house_01.avif"
+                  alt="The Catalyst Center"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
+                />
+              </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 700
-                    }}>The Catalyst Center</h3>
-                    <p className="text-sm text-gray-500" style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                      fontWeight: 400
-                    }}>18 Sapphire Bay Road, Naples</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">The Catalyst Center</h3>
+                    <p className="text-sm text-gray-500">18 Sapphire Bay Road, Naples</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 600
-                  }}>$630,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$630,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>4 Bedrooms</span>
+                    <span>4 Bedrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>2 Bathrooms</span>
+                    <span>2 Bathrooms</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
-                    <span style={{fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'}}>130m²</span>
+                    <span>130m²</span>
                   </div>
                 </div>
               </div>
@@ -1230,11 +1059,15 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="relative"
             >
-              <img
-                src="/house_01.avif"
-                alt="Modern Luxe Villa"
-                className="w-full h-[500px] lg:h-[600px] object-cover rounded-2xl"
-              />
+              <div className="relative h-[500px] w-full overflow-hidden rounded-2xl lg:h-[600px]">
+                <Image
+                  src="/house_01.avif"
+                  alt="Modern Luxe Villa"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1280px) 45vw, 100vw"
+                />
+              </div>
               {/* Pagination Dots */}
               <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2">
                 <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -1261,12 +1094,7 @@ export default function Home() {
 
               {/* Title */}
               <h2
-                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900"
-                style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  lineHeight: "1.2",
-                  letterSpacing: "-1px",
-                }}
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight tracking-tight"
               >
                 Modern Luxe Villa
               </h2>
@@ -1276,74 +1104,46 @@ export default function Home() {
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
-                <span style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 400
-                }}>20 S Aurora Ave, Miami</span>
+                <span >20 S Aurora Ave, Miami</span>
               </div>
 
               {/* Description */}
               <p
                 className="text-base sm:text-lg text-gray-600 leading-relaxed"
-                style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  lineHeight: "1.6",
-                }}
               >
                 Experience luxury living at Modern Luxe Villa, located at 20 S Aurora Ave, Miami. Priced at $1,650,500, this 560 ft² smart home offers 4 bedrooms, 3 bathrooms, and spacious living areas. Enjoy energy efficiency, natural light, security systems, outdoor spaces, and 2 bar areas—perfect for 8+ guests. Built in 2025.
               </p>
 
               {/* Features Grid */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="flex items-center gap-3">
                   <Bed className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 500
-                  }}>4 Bedrooms</span>
+                  <span className="text-gray-700 font-medium">4 Bedrooms</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Bath className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 500
-                  }}>3 Bathrooms</span>
+                  <span className="text-gray-700 font-medium">3 Bathrooms</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Car className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 500
-                  }}>Parking Space</span>
+                  <span className="text-gray-700 font-medium">Parking Space</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-gray-700 font-medium" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 500
-                  }}>2 Bar areas</span>
+                  <span className="text-gray-700 font-medium">2 Bar areas</span>
                 </div>
               </div>
 
               {/* Call to Action and Price */}
               <div className="flex items-center justify-between pt-4">
-                <button className="px-8 py-4 bg-emerald-500 text-white font-semibold rounded-full shadow-lg hover:bg-emerald-600 transition-colors duration-300" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 600
-                }}>
+                <button className="px-8 py-4 bg-emerald-500 text-white font-semibold rounded-full shadow-lg hover:bg-emerald-600 transition-colors duration-300">
                   Get in touch
                 </button>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-gray-900" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 700
-                  }}>$1,650,500</div>
-                  <div className="text-sm text-gray-500" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>Discounted Price</div>
+                  <div className="text-3xl font-bold text-gray-900">$1,650,500</div>
+                  <div className="text-sm text-gray-500">Discounted Price</div>
                 </div>
               </div>
             </motion.div>
@@ -1362,29 +1162,17 @@ export default function Home() {
                 <div className="w-10 h-10 border-2 border-white rounded-lg flex items-center justify-center">
                   <HomeIcon className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-white text-2xl font-semibold" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 400
-                }}>Homely</span>
+                <span className="text-white text-2xl font-semibold">Homely</span>
               </div>
 
               {/* Tagline */}
               <div className="space-y-2">
-                <p className="text-white text-lg" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 400
-                }}>Begin your path to success</p>
-                <p className="text-white text-lg" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 400
-                }}>contact us today.</p>
+                <p className="text-white text-lg">Begin your path to success</p>
+                <p className="text-white text-lg">contact us today.</p>
               </div>
 
               {/* CTA Button */}
-              <button className="px-8 py-4 bg-emerald-500 text-white font-semibold rounded-lg shadow-lg hover:bg-emerald-600 transition-colors duration-300" style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 600
-              }}>
+              <button className="px-8 py-4 bg-emerald-500 text-white font-semibold rounded-lg shadow-lg hover:bg-emerald-600 transition-colors duration-300">
                 Get in touch
               </button>
 
@@ -1412,19 +1200,13 @@ export default function Home() {
             <div className="space-y-8">
               {/* Newsletter Subscription */}
               <div className="space-y-4">
-                <div className="flex gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row">
                   <input
                     type="email"
                     placeholder="Enter your email to subscribe"
                     className="flex-1 px-4 py-3 bg-gray-800 text-white placeholder-gray-400 rounded-lg border border-gray-700 focus:border-emerald-500 focus:outline-none"
-                    style={{
-                      fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif'
-                    }}
                   />
-                  <button className="px-6 py-3 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-600 transition-colors duration-300" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 600
-                  }}>
+                  <button className="w-full px-6 py-3 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-600 transition-colors duration-300 sm:w-auto">
                     Subscribe
                   </button>
                 </div>
@@ -1434,42 +1216,18 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-8">
                 {/* Left Column */}
                 <div className="space-y-3">
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>Luxury Villas</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>Residential Homes</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>Apartments</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>Contact Us</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Luxury Villas</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Residential Homes</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Apartments</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Contact Us</a>
                 </div>
 
                 {/* Right Column */}
                 <div className="space-y-3">
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>Testimonials</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>Blog</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>FAQs</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300" style={{
-                    fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                    fontWeight: 400
-                  }}>404 Page</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Testimonials</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Blog</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">FAQs</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">404 Page</a>
                 </div>
               </div>
             </div>
@@ -1479,23 +1237,14 @@ export default function Home() {
           <div className="border-t border-gray-800 mt-12 pt-8">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               {/* Copyright */}
-              <div className="text-white text-sm" style={{
-                fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                fontWeight: 400
-              }}>
+              <div className="text-white text-sm">
                 ©2025 Homely - Design & Developed by <span className="text-emerald-400">Elio Dev</span>
               </div>
 
               {/* Legal Links */}
               <div className="flex items-center gap-4">
-                <a href="#" className="text-white hover:text-emerald-400 transition-colors duration-300 text-sm" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 400
-                }}>Terms of service</a>
-                <a href="#" className="text-white hover:text-emerald-400 transition-colors duration-300 text-sm" style={{
-                  fontFamily: '"Bricolage Grotesque", "Bricolage Grotesque Placeholder", sans-serif',
-                  fontWeight: 400
-                }}>Privacy policy</a>
+                <a href="#" className="text-white hover:text-emerald-400 transition-colors duration-300 text-sm">Terms of service</a>
+                <a href="#" className="text-white hover:text-emerald-400 transition-colors duration-300 text-sm">Privacy policy</a>
               </div>
             </div>
           </div>
