@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight, Mail, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import Lenis from "lenis";
 import enTranslations from "@/translations/en.json";
 import esTranslations from "@/translations/es.json";
 import frTranslations from "@/translations/fr.json";
@@ -15,11 +16,46 @@ declare global {
   }
 }
 
+// Animated Number Component
+function AnimatedNumber({ value, prefix = '', suffix = '', className = '' }: { value: number | string; prefix?: string; suffix?: string; className?: string }) {
+  return (
+    <motion.span
+      key={value}
+      initial={{ y: 30, opacity: 0, scale: 0.8 }}
+      animate={{ y: 0, opacity: 1, scale: 1 }}
+      exit={{ y: -30, opacity: 0, scale: 0.8 }}
+      transition={{ 
+        duration: 0.6, 
+        ease: [0.16, 1, 0.3, 1],
+        scale: { duration: 0.4 }
+      }}
+      className={`inline-block ${className}`}
+    >
+      {prefix}{value}{suffix}
+    </motion.span>
+  );
+}
+
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'el'>('en');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Hero background images
+  const heroImages = [
+    '/hero_background3.png',
+    '/hero_background2.png',
+    '/hero_background.avif'
+  ];
+
+  // Property data for each image
+  const propertyData = [
+    { beds: 4, baths: 4, parking: 2, price: '4.75M' },
+    { beds: 5, baths: 3, parking: 3, price: '5.20M' },
+    { beds: 6, baths: 5, parking: 4, price: '6.80M' }
+  ];
 
   // Translations
   const translations = {
@@ -32,60 +68,102 @@ export default function Home() {
   const t = translations[language];
 
   useEffect(() => {
-    // Enhanced smooth scrolling with custom easing
-    const smoothScrollTo = (target: number, duration: number = 1000) => {
-      const start = window.pageYOffset;
-      const distance = target - start;
-      let startTime: number;
+    // Initialize Lenis smooth scroll
+    const lenis = new Lenis({
+      duration: 1.5,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.5,
+    });
 
-      const easeInOutCubic = (t: number): number => {
-        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-      };
+    // Create custom scrollbar
+    const scrollbarContainer = document.createElement('div');
+    scrollbarContainer.id = 'custom-scrollbar';
+    scrollbarContainer.style.cssText = `
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100vh;
+      z-index: 999999;
+      pointer-events: none;
+    `;
 
-      const animation = (currentTime: number) => {
-        if (startTime === undefined) startTime = currentTime;
-        const timeElapsed = currentTime - startTime;
-        const progress = Math.min(timeElapsed / duration, 1);
-        
-        const ease = easeInOutCubic(progress);
-        window.scrollTo(0, start + distance * ease);
-        
-        if (timeElapsed < duration) {
-          requestAnimationFrame(animation);
-        }
-      };
+    const scrollbarTrack = document.createElement('div');
+    scrollbarTrack.style.cssText = `
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.05);
+    `;
 
-      requestAnimationFrame(animation);
+    const scrollbarThumb = document.createElement('div');
+    scrollbarThumb.style.cssText = `
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      background: linear-gradient(to bottom, #10b981, #059669);
+      border-radius: 2px;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+      min-height: 80px;
+    `;
+
+    scrollbarContainer.appendChild(scrollbarTrack);
+    scrollbarContainer.appendChild(scrollbarThumb);
+    document.body.appendChild(scrollbarContainer);
+
+    // Show scrollbar on scroll
+    let scrollbarTimeout: NodeJS.Timeout;
+    const showScrollbar = () => {
+      scrollbarThumb.style.opacity = '1';
+      clearTimeout(scrollbarTimeout);
+      scrollbarTimeout = setTimeout(() => {
+        scrollbarThumb.style.opacity = '0';
+      }, 1000);
     };
 
-    // Add smooth scroll to window
-    window.smoothScrollTo = smoothScrollTo;
+    // Update scrollbar position and track scroll
+    lenis.on('scroll', ({ scroll, limit }: any) => {
+      showScrollbar();
+      const progress = scroll / limit;
+      const thumbHeight = Math.max(80, window.innerHeight * 0.1);
+      const maxTop = window.innerHeight - thumbHeight;
+      scrollbarThumb.style.height = `${thumbHeight}px`;
+      scrollbarThumb.style.transform = `translateY(${progress * maxTop}px)`;
+      
+      // Track scroll position for header state
+      setIsScrolled(scroll > 50);
+      setIsLangDropdownOpen(false);
+    });
 
-    // Enhanced scroll event with throttling
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          setIsScrolled(scrollY > 50);
-          setIsLangDropdownOpen(false); // Close language dropdown on scroll
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
+    // Animation function
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
+    requestAnimationFrame(raf);
+
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      lenis.destroy();
+      scrollbarContainer.remove();
+      if (scrollbarTimeout) clearTimeout(scrollbarTimeout);
     };
   }, []);
 
+  // Auto-scroll carousel effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
+
   return (
     <div className="min-h-screen smooth-scroll font-bricolage">
-      <div className="relative px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
-
 
       {/* Header */}
       <motion.header
@@ -349,31 +427,32 @@ export default function Home() {
 
       {/* Hero Section */}
       <main className="relative min-h-screen flex items-center pt-6 sm:pt-10 md:pt-14 lg:pt-18">
-        {/* Background Image - Desktop */}
-        <motion.div 
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 2, ease: "easeOut" }}
-          className="absolute inset-0 left-0 right-0 w-screen h-full hidden sm:block -z-10"
-          style={{ marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}
-        >
-          <Image
-            src="/hero_background.avif"
-            alt="Background"
-            fill
-            className="object-cover"
-            priority
-          />
-        </motion.div>
+        {/* Background Images Carousel - Desktop */}
+        <div className="absolute inset-0 h-full hidden sm:block -z-10 overflow-hidden">
+          {heroImages.map((src, index) => (
+            <motion.div
+              key={`desktop-${index}`}
+              initial={{ scale: 1.1, opacity: 0 }}
+              animate={{
+                scale: index === currentImageIndex ? 1 : 1.05,
+                opacity: index === currentImageIndex ? 1 : 0,
+              }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={src}
+                alt={`Background ${index + 1}`}
+                fill
+                className="object-cover"
+                priority={index === 0}
+              />
+            </motion.div>
+          ))}
+        </div>
 
         {/* Background Image - Mobile */}
-        <motion.div 
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 2, ease: "easeOut" }}
-          className="absolute inset-0 left-0 right-0 w-screen h-full block sm:hidden -z-10"
-          style={{ marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}
-        >
+        <div className="absolute inset-0 min-h-screen block sm:hidden -z-10">
           <Image
             src="/hero_background_mobile.avif"
             alt="Background"
@@ -381,10 +460,10 @@ export default function Home() {
             className="object-cover"
             priority
           />
-        </motion.div>
-        <div className="w-full max-w-none mx-auto relative z-10">
+        </div>
+        <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%] mx-auto relative z-10">
           {/* Content */}
-          <div className="space-y-4 sm:space-y-5 md:space-y-6">
+          <div className="max-w-3xl space-y-4 sm:space-y-5 md:space-y-6">
             <motion.div 
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -407,7 +486,7 @@ export default function Home() {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.7 }}
-              className="text-balance font-bold text-white tracking-tight text-3xl leading-tight sm:text-4xl md:text-5xl lg:text-6xl"
+              className="text-balance font-bold text-white tracking-tight text-2xl leading-tight sm:text-3xl md:text-4xl lg:text-5xl"
             >
               <motion.span 
                 key={`title-${language}`}
@@ -453,37 +532,50 @@ export default function Home() {
               className="flex flex-col sm:flex-row gap-3 sm:gap-4"
             >
               <motion.button 
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="btn-primary bg-white px-6 py-3 sm:px-7 sm:py-3.5 md:px-8 md:py-4 rounded-full shadow-lg"
+                className="relative group bg-gradient-to-br from-white to-gray-50 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg border border-white/20 overflow-hidden backdrop-blur-sm"
               >
+                {/* Shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                
                 <motion.span
                   key={`getInTouch-${language}`}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   transition={{ duration: 0.3 }}
-                  className="text-gray-800 text-sm sm:text-base md:text-lg font-semibold tracking-tight"
+                  className="relative flex items-center gap-1.5 text-gray-800 text-xs sm:text-sm font-bold tracking-tight"
                 >
                   {t.getInTouch}
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
                 </motion.span>
               </motion.button>
+              
               <motion.button 
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="btn-secondary border border-white px-6 py-3 sm:px-7 sm:py-3.5 md:px-8 md:py-4 rounded-full"
+                className="relative group bg-white/10 backdrop-blur-md border-2 border-white/30 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg overflow-hidden hover:bg-white/20 transition-all duration-300"
               >
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 via-green-400/20 to-emerald-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+                
                 <motion.span
                   key={`viewDetails-${language}`}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   transition={{ duration: 0.3 }}
-                  className="text-white text-sm sm:text-base md:text-lg font-semibold tracking-tight"
+                  className="relative flex items-center gap-1.5 text-white text-xs sm:text-sm font-bold tracking-tight"
                 >
                   {t.viewDetails}
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </motion.span>
               </motion.button>
             </motion.div>
@@ -513,7 +605,10 @@ export default function Home() {
                   >
                     <Bed className="h-4 w-4 text-emerald-600 flex-shrink-0" />
                     <div className="flex flex-col min-w-0">
-                      <span className="text-xs font-bold text-gray-900 leading-none">4</span>
+                      <AnimatedNumber 
+                        value={propertyData[currentImageIndex].beds} 
+                        className="text-xs font-bold text-gray-900 leading-none"
+                      />
                       <span className="text-[10px] text-gray-500 leading-tight">{t.beds}</span>
                     </div>
                   </motion.div>
@@ -529,7 +624,10 @@ export default function Home() {
                   >
                     <Bath className="h-4 w-4 text-emerald-600 flex-shrink-0" />
                     <div className="flex flex-col min-w-0">
-                      <span className="text-xs font-bold text-gray-900 leading-none">4</span>
+                      <AnimatedNumber 
+                        value={propertyData[currentImageIndex].baths} 
+                        className="text-xs font-bold text-gray-900 leading-none"
+                      />
                       <span className="text-[10px] text-gray-500 leading-tight">{t.baths}</span>
                     </div>
                   </motion.div>
@@ -545,7 +643,10 @@ export default function Home() {
                   >
                     <Car className="h-4 w-4 text-emerald-600 flex-shrink-0" />
                     <div className="flex flex-col min-w-0">
-                      <span className="text-xs font-bold text-gray-900 leading-none">2</span>
+                      <AnimatedNumber 
+                        value={propertyData[currentImageIndex].parking} 
+                        className="text-xs font-bold text-gray-900 leading-none"
+                      />
                       <span className="text-[10px] text-gray-500 leading-tight">{t.parking}</span>
                     </div>
                   </motion.div>
@@ -559,7 +660,11 @@ export default function Home() {
                   className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 hover:from-emerald-100 hover:to-emerald-200 transition-colors"
                 >
                   <div className="flex flex-col text-center">
-                    <span className="text-sm font-bold text-gray-900 leading-none">$4.75M</span>
+                    <AnimatedNumber 
+                      value={propertyData[currentImageIndex].price} 
+                      prefix="$"
+                      className="text-sm font-bold text-gray-900 leading-none"
+                    />
                     <span className="text-[10px] text-emerald-700 font-medium mt-0.5">{t.forSale}</span>
                   </div>
                 </motion.div>
@@ -576,7 +681,10 @@ export default function Home() {
                 >
                   <Bed className="h-5 w-5 text-emerald-600" />
                   <div className="flex flex-col">
-                    <span className="text-sm md:text-base font-bold text-gray-900 leading-none">4</span>
+                    <AnimatedNumber 
+                      value={propertyData[currentImageIndex].beds} 
+                      className="text-sm md:text-base font-bold text-gray-900 leading-none"
+                    />
                     <span className="text-xs text-gray-500">{t.beds}</span>
                   </div>
                 </motion.div>
@@ -592,7 +700,10 @@ export default function Home() {
                 >
                   <Bath className="h-5 w-5 text-emerald-600" />
                   <div className="flex flex-col">
-                    <span className="text-sm md:text-base font-bold text-gray-900 leading-none">4</span>
+                    <AnimatedNumber 
+                      value={propertyData[currentImageIndex].baths} 
+                      className="text-sm md:text-base font-bold text-gray-900 leading-none"
+                    />
                     <span className="text-xs text-gray-500">{t.baths}</span>
                   </div>
                 </motion.div>
@@ -608,7 +719,10 @@ export default function Home() {
                 >
                   <Car className="h-5 w-5 text-emerald-600" />
                   <div className="flex flex-col">
-                    <span className="text-sm md:text-base font-bold text-gray-900 leading-none">2</span>
+                    <AnimatedNumber 
+                      value={propertyData[currentImageIndex].parking} 
+                      className="text-sm md:text-base font-bold text-gray-900 leading-none"
+                    />
                     <span className="text-xs text-gray-500">{t.parking}</span>
                   </div>
                 </motion.div>
@@ -623,7 +737,11 @@ export default function Home() {
                   className="flex items-center gap-2 px-3 py-2 md:px-4 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 hover:from-emerald-100 hover:to-emerald-200 transition-colors"
                 >
                   <div className="flex flex-col">
-                    <span className="text-base md:text-lg font-bold text-gray-900 leading-none">$4.75M</span>
+                    <AnimatedNumber 
+                      value={propertyData[currentImageIndex].price} 
+                      prefix="$"
+                      className="text-base md:text-lg font-bold text-gray-900 leading-none"
+                    />
                     <span className="text-xs text-emerald-700 font-medium mt-0.5">{t.forSale}</span>
                   </div>
                 </motion.div>
@@ -631,8 +749,23 @@ export default function Home() {
             </div>
           </div>
         </motion.div>
+
+        {/* Carousel Indicators */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 flex gap-2">
+          {heroImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === currentImageIndex 
+                  ? 'bg-white w-6' 
+                  : 'bg-white/50 hover:bg-white/75'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </main>
-      </div>
 
       {/* Properties Section */}
 <section className="relative w-full bg-white pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20 overflow-hidden z-20">
@@ -680,7 +813,7 @@ export default function Home() {
           {t.discover}
         </p>
 
-        <button className="px-5 py-2.5 bg-emerald-500 text-white font-semibold rounded-full shadow hover:bg-emerald-600 transition text-sm sm:text-base">
+        <button className="px-5 py-2.5 bg-emerald-500 text-white font-semibold rounded-full shadow hover:bg-emerald-600 transition text-sm sm:text-base hover-glow">
           {t.viewProperties}
         </button>
       </motion.div>
@@ -862,9 +995,14 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
+              whileHover={{ y: -8 }}
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+              <motion.div 
+                className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.4 }}
+              >
                 <Image
                   src="/house_01.avif"
                   alt="Serenity height villas"
@@ -872,7 +1010,7 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </div>
+              </motion.div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -904,9 +1042,14 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
+              whileHover={{ y: -8 }}
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+              <motion.div 
+                className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.4 }}
+              >
                 <Image
                   src="/house_02.png"
                   alt="Mountain Retreat Villa"
@@ -914,7 +1057,7 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </div>
+              </motion.div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -946,9 +1089,14 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
+              whileHover={{ y: -8 }}
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+              <motion.div 
+                className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.4 }}
+              >
                 <Image
                   src="/house_03.png"
                   alt="Vista Grand"
@@ -956,7 +1104,7 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </div>
+              </motion.div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -988,9 +1136,14 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
+              whileHover={{ y: -8 }}
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+              <motion.div 
+                className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.4 }}
+              >
                 <Image
                   src="/house_04.png"
                   alt="Maplewood Residence"
@@ -998,7 +1151,7 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </div>
+              </motion.div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -1030,9 +1183,14 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.5 }}
+              whileHover={{ y: -8 }}
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+              <motion.div 
+                className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.4 }}
+              >
                 <Image
                   src="/house_06.png"
                   alt="Whispering Pines"
@@ -1040,7 +1198,7 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </div>
+              </motion.div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -1072,9 +1230,14 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.6 }}
+              whileHover={{ y: -8 }}
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
             >
-              <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
+              <motion.div 
+                className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.4 }}
+              >
                 <Image
                   src="/house_05.png"
                   alt="The Catalyst Center"
@@ -1082,7 +1245,7 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </div>
+              </motion.div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
