@@ -46,8 +46,8 @@ export default function Home() {
   // Hero background images
   const heroImages = [
     '/hero_background3.png',
-    '/hero_background2.png',
-    '/hero_background.avif'
+    '/hero_background4.png',
+    '/hero_background5.png'
   ];
 
   // Property data for each image
@@ -449,6 +449,8 @@ export default function Home() {
               />
             </motion.div>
           ))}
+          {/* Dark overlay for better text visibility */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40" />
         </div>
 
         {/* Background Image - Mobile */}
@@ -460,6 +462,8 @@ export default function Home() {
             className="object-cover"
             priority
           />
+          {/* Dark overlay for better text visibility */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40" />
         </div>
         <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%] mx-auto relative z-10">
           {/* Content */}
