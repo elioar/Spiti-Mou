@@ -18,6 +18,7 @@ declare global {
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'el'>('en');
 
   // Translations
@@ -67,6 +68,7 @@ export default function Home() {
         requestAnimationFrame(() => {
           const scrollY = window.scrollY;
           setIsScrolled(scrollY > 50);
+          setIsLangDropdownOpen(false); // Close language dropdown on scroll
           ticking = false;
         });
         ticking = true;
@@ -90,7 +92,7 @@ export default function Home() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="fixed top-4 left-0 right-0 z-[9999] flex h-20 items-center justify-center py-2 sm:h-24 sm:py-3 md:h-28 md:py-4 lg:h-32"
+        className="fixed top-4 left-0 right-0 z-[9999] flex h-16 items-center justify-center py-2 sm:h-20 sm:py-2 md:h-22 md:py-3 lg:h-24"
       >
         <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
           <div className={`flex items-center justify-between max-w-none mx-auto w-full transition-all duration-300 ${
@@ -107,11 +109,11 @@ export default function Home() {
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 border-2 rounded-lg flex items-center justify-center transition-colors duration-300 ${
+              className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 border-2 rounded-lg flex items-center justify-center transition-colors duration-300 ${
                 isScrolled ? 'border-black' : 'border-white'
               }`}
             >
-              <HomeIcon className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-colors duration-300 ${
+              <HomeIcon className={`w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 transition-colors duration-300 ${
                 isScrolled ? 'text-black' : 'text-white'
               }`} />
             </motion.div>
@@ -119,7 +121,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className={`text-base font-semibold tracking-tight transition-colors duration-300 sm:text-xl md:text-2xl lg:text-3xl ${
+              className={`text-base font-semibold tracking-tight transition-colors duration-300 sm:text-lg md:text-xl ${
                 isScrolled ? 'text-black' : 'text-white'
               }`}
             >
@@ -140,27 +142,27 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.5 }}
               className="hidden sm:flex items-center gap-2 md:gap-3"
             >
-              <Phone className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-colors duration-300 ${
+              <Phone className={`w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 transition-colors duration-300 ${
                 isScrolled ? 'text-black' : 'text-white'
               }`} />
               <span
-                className={`text-sm font-medium tracking-tight transition-colors duration-300 sm:text-base md:text-lg lg:text-xl ${
+                className={`text-sm font-medium tracking-tight transition-colors duration-300 sm:text-sm md:text-base ${
                   isScrolled ? 'text-black' : 'text-white'
                 }`}
               >
-                +1-212-456-7890
+                {t.phone}
               </span>
             </motion.div>
             <motion.div 
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              className={`hidden sm:block w-px h-6 md:h-8 transition-colors duration-300 ${
+              className={`hidden sm:block w-px h-6 md:h-7 transition-colors duration-300 ${
                 isScrolled ? 'bg-gray-400' : 'bg-white'
               }`}
             ></motion.div>
             
-            {/* Language Selector */}
+            {/* Language Selector Dropdown */}
             <motion.div 
               initial={{ x: 50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -168,28 +170,73 @@ export default function Home() {
               className="relative mr-3 sm:mr-4"
             >
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => {
-                  const languages: ('en' | 'es' | 'fr' | 'el')[] = ['en', 'es', 'fr', 'el'];
-                  const currentIndex = languages.indexOf(language);
-                  const nextLang = languages[(currentIndex + 1) % languages.length];
-                  setLanguage(nextLang);
-                }}
-                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 transition-all duration-300 ${
-                  isScrolled ? 'border-gray-800 hover:border-black' : 'border-white/20 hover:border-white/40'
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                className={`flex items-center gap-2 px-3 py-1.5 sm:px-3 sm:py-2 rounded-full border-2 transition-all duration-300 ${
+                  isScrolled 
+                    ? 'bg-white border-gray-200 hover:border-gray-300 text-gray-800' 
+                    : 'bg-white/10 backdrop-blur-sm border-white/20 hover:border-white/40 text-white'
                 }`}
               >
-                <motion.span
-                  key={language}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="text-sm font-semibold uppercase"
+                <svg className="w-4 h-4 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                </svg>
+                <span className="text-xs font-semibold uppercase hidden sm:inline">{language}</span>
+                <svg 
+                  className={`w-3 h-3 sm:w-3 sm:h-3 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
                 >
-                  {language.toUpperCase()}
-                </motion.span>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </motion.button>
+
+              {/* Dropdown Menu */}
+              {isLangDropdownOpen && (
+                <>
+                  {/* Backdrop */}
+                  <div 
+                    className="fixed inset-0 z-30" 
+                    onClick={() => setIsLangDropdownOpen(false)}
+                  />
+                  
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-40"
+                  >
+                    {[
+                      { code: 'en', name: 'English', flag: '🇬🇧' },
+                      { code: 'es', name: 'Español', flag: '🇪🇸' },
+                      { code: 'fr', name: 'Français', flag: '🇫🇷' },
+                      { code: 'el', name: 'Ελληνικά', flag: '🇬🇷' },
+                    ].map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          setLanguage(lang.code as 'en' | 'es' | 'fr' | 'el');
+                          setIsLangDropdownOpen(false);
+                        }}
+                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-emerald-50 transition-colors duration-200 ${
+                          language === lang.code ? 'bg-emerald-100 text-emerald-700' : 'text-gray-700'
+                        }`}
+                      >
+                        <span className="text-2xl">{lang.flag}</span>
+                        <span className="font-medium">{lang.name}</span>
+                        {language === lang.code && (
+                          <svg className="w-5 h-5 ml-auto text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                    ))}
+                  </motion.div>
+                </>
+              )}
             </motion.div>
             
             <motion.button 
@@ -197,19 +244,19 @@ export default function Home() {
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
               onClick={() => setIsMenuOpen(true)}
-              className={`btn-menu flex items-center gap-2 sm:gap-3 md:gap-4 rounded-full px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3 lg:px-8 lg:py-4 h-10 sm:h-12 md:h-14 lg:h-16 transition-colors duration-300 ${
+              className={`btn-menu flex items-center gap-2 sm:gap-2 md:gap-3 rounded-full px-3 py-2 sm:px-4 sm:py-2 md:px-5 md:py-2.5 h-10 sm:h-11 md:h-12 transition-colors duration-300 ${
                 isScrolled ? 'bg-gray-200' : 'bg-white'
               }`}
             >
-              <Menu className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-colors duration-300 ${
+              <Menu className={`w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 transition-colors duration-300 ${
                 isScrolled ? 'text-black' : 'text-gray-800'
               }`} />
               <span
-                className={`text-sm font-semibold tracking-tight transition-colors duration-300 sm:text-base md:text-lg lg:text-xl ${
+                className={`text-sm font-semibold tracking-tight transition-colors duration-300 sm:text-sm md:text-base ${
                   isScrolled ? 'text-black' : 'text-gray-800'
                 }`}
               >
-                Menu
+                {t.menu}
               </span>
             </motion.button>
           </motion.div>
@@ -271,7 +318,7 @@ export default function Home() {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
-                    className="block text-white text-5xl font-bold hover:text-emerald-400 transition-colors duration-300 group"
+                    className="block text-white text-3xl sm:text-4xl font-bold hover:text-emerald-400 transition-colors duration-300 group"
                     
                   >
                     <span className="inline-block group-hover:translate-x-2 transition-transform duration-300">{item}</span>
@@ -288,11 +335,11 @@ export default function Home() {
               >
                 <div className="flex items-center justify-center gap-3 text-white/80">
                   <Phone className="w-5 h-5" />
-                  <span className="text-lg">+1-212-456-7890</span>
+                  <span className="text-lg">{t.phone}</span>
                 </div>
                 <div className="flex items-center justify-center gap-3 text-white/80">
                   <Mail className="w-5 h-5" />
-                  <span className="text-lg">hello@homely.com</span>
+                  <span className="text-lg">{t.email}</span>
                 </div>
               </motion.div>
             </div>
@@ -337,12 +384,12 @@ export default function Home() {
         </motion.div>
         <div className="w-full max-w-none mx-auto relative z-10">
           {/* Content */}
-          <div className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12">
+          <div className="space-y-4 sm:space-y-5 md:space-y-6">
             <motion.div 
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight" 
+              className="text-white text-xs sm:text-sm font-medium tracking-tight" 
               
               >
               <motion.span
@@ -360,52 +407,56 @@ export default function Home() {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.7 }}
-              className="text-balance font-bold text-white tracking-tight text-4xl leading-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.3rem]"
+              className="text-balance font-bold text-white tracking-tight text-3xl leading-tight sm:text-4xl md:text-5xl lg:text-6xl"
             >
-              {language === 'en' ? (
-                <>
-                  <motion.span 
-                    initial={{ x: -100, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 0.9 }}
-                    className="block"
-                  >
-                    Futuristic
-                  </motion.span>
-                  <motion.span 
-                    initial={{ x: 100, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 1.1 }}
-                    className="block"
-                  >
-                    Haven
-                  </motion.span>
-                </>
-              ) : (
-                <motion.span
-                  key={language}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -20, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="block"
-                >
-                  {t.title}
-                </motion.span>
-              )}
+              <motion.span 
+                key={`title-${language}`}
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.9 }}
+                className="block"
+              >
+                {t.title}
+              </motion.span>
+              <motion.span 
+                key={`titleAlt-${language}`}
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.8, delay: 1.1 }}
+                className="block text-white"
+              >
+                {t.titleAlt}
+              </motion.span>
             </motion.h1>
+            
+            <motion.p
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 1.2 }}
+              className="text-white/90 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed"
+            >
+              <motion.span
+                key={`desc-${language}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {t.heroDescription}
+              </motion.span>
+            </motion.p>
             
             <motion.div 
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 1.3 }}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6"
+              transition={{ duration: 0.8, delay: 1.4 }}
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4"
             >
               <motion.button 
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2 }}
-                className="btn-primary bg-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full shadow-lg"
+                className="btn-primary bg-white px-6 py-3 sm:px-7 sm:py-3.5 md:px-8 md:py-4 rounded-full shadow-lg"
               >
                 <motion.span
                   key={`getInTouch-${language}`}
@@ -413,7 +464,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   transition={{ duration: 0.3 }}
-                  className="text-gray-800 text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight"
+                  className="text-gray-800 text-sm sm:text-base md:text-lg font-semibold tracking-tight"
                 >
                   {t.getInTouch}
                 </motion.span>
@@ -422,7 +473,7 @@ export default function Home() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2 }}
-                className="btn-secondary border border-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 lg:px-12 lg:py-6 rounded-full"
+                className="btn-secondary border border-white px-6 py-3 sm:px-7 sm:py-3.5 md:px-8 md:py-4 rounded-full"
               >
                 <motion.span
                   key={`viewDetails-${language}`}
@@ -430,7 +481,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   transition={{ duration: 0.3 }}
-                  className="text-white text-sm sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight"
+                  className="text-white text-sm sm:text-base md:text-lg font-semibold tracking-tight"
                 >
                   {t.viewDetails}
                 </motion.span>
@@ -440,127 +491,142 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Bottom Info Bar */}
+        {/* Bottom Info Bar - Responsive */}
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1, delay: 1.8, ease: "easeOut" }}
-          className="absolute bottom-6 left-0 right-0 z-10"
+          className="absolute bottom-6 left-4 right-4 sm:bottom-8 sm:left-auto sm:right-8 md:right-16 lg:right-[10%] xl:right-[15%] z-10"
         >
-          <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
-            <div className="rounded-3xl bg-white shadow-2xl">
-              <div className="flex w-full flex-col items-center justify-center px-6 py-6 sm:flex-row sm:px-8 sm:py-8 md:px-10 md:py-10 lg:px-12">
-                <div className="flex w-full flex-col gap-4 sm:hidden">
-                  <div className="flex items-center gap-2">
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 2.0 }}
-                      whileHover={{ scale: 1.05 }}
-                      className="flex flex-1 flex-col items-center text-center"
-                    >
-                      <Bed className="mb-2 h-6 w-6 text-gray-700" />
-                      <span className="text-sm font-medium text-gray-700">4 Bedrooms</span>
-                    </motion.div>
-                    <div className="h-10 w-px bg-gray-300" />
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 2.1 }}
-                      whileHover={{ scale: 1.05 }}
-                      className="flex flex-1 flex-col items-center text-center"
-                    >
-                      <Bath className="mb-2 h-6 w-6 text-gray-700" />
-                      <span className="text-sm font-medium text-gray-700">4 Bathrooms</span>
-                    </motion.div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 2.2 }}
-                      whileHover={{ scale: 1.05 }}
-                      className="flex flex-1 flex-col items-center text-center"
-                    >
-                      <Car className="mb-2 h-6 w-6 text-gray-700" />
-                      <span className="text-sm font-medium text-gray-700">Parking</span>
-                    </motion.div>
-                    <div className="h-10 w-px bg-gray-300" />
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 2.3 }}
-                      whileHover={{ scale: 1.05 }}
-                      className="flex flex-1 flex-col items-center text-center"
-                    >
-                      <div className="text-lg font-bold text-gray-800">$4,750,000</div>
-                      <div className="text-xs text-gray-500">For selling</div>
-                    </motion.div>
-                  </div>
-                </div>
-                <div className="hidden w-full flex-row items-center gap-6 sm:flex md:gap-8 lg:gap-10 xl:gap-[50px]">
+          <div className="rounded-2xl bg-white/95 backdrop-blur-sm shadow-xl overflow-hidden">
+            <div className="px-3 py-3 sm:px-5 sm:py-4 md:px-6 md:py-5">
+              
+              {/* Mobile Layout - 2 rows */}
+              <div className="flex flex-col gap-2 sm:hidden">
+                <div className="flex items-center justify-between gap-2">
                   <motion.div
-                    initial={{ y: 30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 2.0 }}
-                    className="flex flex-1 flex-col items-center text-center"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 2.0 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors flex-1"
                   >
-                    <Bed className="mb-2 h-7 w-7 text-gray-700 md:h-8 md:w-8" />
-                    <span className="text-base font-medium text-gray-700 md:text-lg">4 Bedrooms</span>
+                    <Bed className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-xs font-bold text-gray-900 leading-none">4</span>
+                      <span className="text-[10px] text-gray-500 leading-tight">{t.beds}</span>
+                    </div>
                   </motion.div>
+                  
+                  <div className="h-8 w-px bg-gray-200"></div>
+                  
                   <motion.div
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5, delay: 2.1 }}
-                    className="h-8 w-px bg-gray-300 md:h-10 lg:h-12"
-                  ></motion.div>
-                  <motion.div
-                    initial={{ y: 30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 2.2 }}
-                    className="flex flex-1 flex-col items-center text-center"
+                    whileHover={{ scale: 1.05 }}
+                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors flex-1"
                   >
-                    <Bath className="mb-2 h-7 w-7 text-gray-700 md:h-8 md:w-8" />
-                    <span className="text-base font-medium text-gray-700 md:text-lg">4 Bathrooms</span>
+                    <Bath className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-xs font-bold text-gray-900 leading-none">4</span>
+                      <span className="text-[10px] text-gray-500 leading-tight">{t.baths}</span>
+                    </div>
                   </motion.div>
+                  
+                  <div className="h-8 w-px bg-gray-200"></div>
+                  
                   <motion.div
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 0.5, delay: 2.3 }}
-                    className="h-8 w-px bg-gray-300 md:h-10 lg:h-12"
-                  ></motion.div>
-                  <motion.div
-                    initial={{ y: 30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 2.4 }}
-                    className="flex flex-1 flex-col items-center text-center"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 2.2 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors flex-1"
                   >
-                    <Car className="mb-2 h-7 w-7 text-gray-700 md:h-8 md:w-8" />
-                    <span className="text-base font-medium text-gray-700 md:text-lg">Parking space</span>
-                  </motion.div>
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 0.5, delay: 2.5 }}
-                    className="h-8 w-px bg-gray-300 md:h-10 lg:h-12"
-                  ></motion.div>
-                  <motion.div
-                    initial={{ y: 30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 2.6 }}
-                    className="flex flex-1 flex-col items-center text-center"
-                  >
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ duration: 0.5, delay: 2.7 }}
-                      className="text-2xl font-bold text-gray-800 md:text-3xl"
-                    >
-                      $4,750,000
-                    </motion.div>
-                    <div className="text-sm text-gray-500">For selling price</div>
+                    <Car className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-xs font-bold text-gray-900 leading-none">2</span>
+                      <span className="text-[10px] text-gray-500 leading-tight">{t.parking}</span>
+                    </div>
                   </motion.div>
                 </div>
+                
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 2.3 }}
+                  whileHover={{ scale: 1.02 }}
+                  className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 hover:from-emerald-100 hover:to-emerald-200 transition-colors"
+                >
+                  <div className="flex flex-col text-center">
+                    <span className="text-sm font-bold text-gray-900 leading-none">$4.75M</span>
+                    <span className="text-[10px] text-emerald-700 font-medium mt-0.5">{t.forSale}</span>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Tablet & Desktop Layout - Single Line */}
+              <div className="hidden sm:flex items-center gap-3 md:gap-4 lg:gap-6">
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 2.0 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="flex items-center gap-2 px-2 py-2 md:px-3 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <Bed className="h-5 w-5 text-emerald-600" />
+                  <div className="flex flex-col">
+                    <span className="text-sm md:text-base font-bold text-gray-900 leading-none">4</span>
+                    <span className="text-xs text-gray-500">{t.beds}</span>
+                  </div>
+                </motion.div>
+                
+                <div className="h-8 w-px bg-gray-200"></div>
+                
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 2.1 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="flex items-center gap-2 px-2 py-2 md:px-3 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <Bath className="h-5 w-5 text-emerald-600" />
+                  <div className="flex flex-col">
+                    <span className="text-sm md:text-base font-bold text-gray-900 leading-none">4</span>
+                    <span className="text-xs text-gray-500">{t.baths}</span>
+                  </div>
+                </motion.div>
+                
+                <div className="h-8 w-px bg-gray-200"></div>
+                
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 2.2 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="flex items-center gap-2 px-2 py-2 md:px-3 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <Car className="h-5 w-5 text-emerald-600" />
+                  <div className="flex flex-col">
+                    <span className="text-sm md:text-base font-bold text-gray-900 leading-none">2</span>
+                    <span className="text-xs text-gray-500">{t.parking}</span>
+                  </div>
+                </motion.div>
+                
+                <div className="h-8 w-px bg-gray-200"></div>
+                
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 2.3 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="flex items-center gap-2 px-3 py-2 md:px-4 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 hover:from-emerald-100 hover:to-emerald-200 transition-colors"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-base md:text-lg font-bold text-gray-900 leading-none">$4.75M</span>
+                    <span className="text-xs text-emerald-700 font-medium mt-0.5">{t.forSale}</span>
+                  </div>
+                </motion.div>
               </div>
             </div>
           </div>
@@ -569,7 +635,7 @@ export default function Home() {
       </div>
 
       {/* Properties Section */}
-<section className="relative w-full bg-white pt-20 pb-16 sm:pt-24 sm:pb-20 md:pt-32 md:pb-24 overflow-hidden z-20">
+<section className="relative w-full bg-white pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20 overflow-hidden z-20">
   {/* Background Accent Line */}
   <div className="absolute left-0 top-0 w-full h-full pointer-events-none">
     <svg
@@ -599,25 +665,23 @@ export default function Home() {
       >
         <div className="flex items-center gap-2 text-emerald-600 font-medium">
           <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span>Categories</span>
+          <span>{t.categories}</span>
         </div>
 
         <h2
-          className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight tracking-tight"
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-tight tracking-tight"
         >
-          Explore best properties <br className="hidden sm:block" /> with expert
-          services.
+          {t.exploreBest} <br className="hidden sm:block" /> {t.withExpert}
         </h2>
 
         <p
-          className="text-base sm:text-lg text-gray-600 max-w-md leading-relaxed"
+          className="text-sm sm:text-base text-gray-600 max-w-md leading-relaxed"
         >
-          Discover a diverse range of premium properties, from luxurious
-          apartments to spacious villas, tailored to your needs.
+          {t.discover}
         </p>
 
-        <button className="px-6 py-3 bg-emerald-500 text-white font-semibold rounded-full shadow hover:bg-emerald-600 transition">
-          View Properties
+        <button className="px-5 py-2.5 bg-emerald-500 text-white font-semibold rounded-full shadow hover:bg-emerald-600 transition text-sm sm:text-base">
+          {t.viewProperties}
         </button>
       </motion.div>
 
@@ -650,8 +714,8 @@ export default function Home() {
           </div>
           {/* Bottom Left Text */}
           <div className="text-white">
-            <h3 className="text-2xl font-bold mb-2">Luxury Villas</h3>
-            <p className="text-sm opacity-90">Discover our curated collection of exceptional properties designed for modern living.</p>
+            <h3 className="text-xl font-bold mb-2">{t.luxuryVillas}</h3>
+            <p className="text-xs opacity-90">{t.premiumPropertiesDesc}</p>
           </div>
         </div>
       </motion.div>
@@ -669,7 +733,7 @@ export default function Home() {
       <div className="sm:col-span-1 group relative cursor-pointer">
         <div className="relative h-[200px] w-full overflow-hidden rounded-2xl sm:h-[230px] lg:h-[250px]">
           <Image
-            src="/house_01.avif"
+            src="/house_02.png"
             alt="Modern Villa"
             fill
             className="object-cover"
@@ -688,8 +752,8 @@ export default function Home() {
           </div>
           {/* Bottom Left Text */}
           <div className="text-white">
-            <h3 className="text-2xl font-bold mb-2">Office Spaces</h3>
-            <p className="text-sm opacity-90">Experience elegance and comfort with our exclusive luxury villas, designed for sophisticated living.</p>
+            <h3 className="text-xl font-bold mb-2">{t.officeSpaces}</h3>
+            <p className="text-xs opacity-90">{t.residentialHomesDesc}</p>
           </div>
         </div>
       </div>
@@ -698,7 +762,7 @@ export default function Home() {
       <div className="sm:col-span-1 group relative cursor-pointer">
         <div className="relative h-[200px] w-full overflow-hidden rounded-2xl sm:h-[230px] lg:h-[250px]">
           <Image
-            src="/house_01.avif"
+            src="/house_03.png"
             alt="Apartment Building"
             fill
             className="object-cover"
@@ -717,8 +781,8 @@ export default function Home() {
           </div>
           {/* Bottom Left Text */}
           <div className="text-white">
-            <h3 className="text-2xl font-bold mb-2">Apartments</h3>
-            <p className="text-sm opacity-90">Discover contemporary urban living spaces with stunning views and premium amenities.</p>
+            <h3 className="text-xl font-bold mb-2">{t.apartments}</h3>
+            <p className="text-xs opacity-90">{t.modernApartmentsDesc}</p>
           </div>
         </div>
       </div>
@@ -727,7 +791,7 @@ export default function Home() {
       <div className="sm:col-span-1 group relative cursor-pointer">
         <div className="relative h-[200px] w-full overflow-hidden rounded-2xl sm:h-[230px] lg:h-[250px]">
           <Image
-            src="/house_01.avif"
+            src="/house_04.png"
             alt="Interior Office"
             fill
             className="object-cover"
@@ -746,8 +810,8 @@ export default function Home() {
           </div>
           {/* Bottom Left Text */}
           <div className="text-white">
-            <h3 className="text-2xl font-bold mb-2">Residential Homes</h3>
-            <p className="text-sm opacity-90">Sophisticated interiors and innovative design come together in our premium living spaces.</p>
+            <h3 className="text-xl font-bold mb-2">{t.residentialHomes}</h3>
+            <p className="text-xs opacity-90">{t.luxuryResidencesDesc}</p>
           </div>
         </div>
       </div>
@@ -756,7 +820,7 @@ export default function Home() {
 </section>
 
       {/* Third Section - Property Cards */}
-      <section className="relative w-full bg-white pt-20 pb-16 sm:pt-24 sm:pb-20 md:pt-32 md:pb-24">
+      <section className="relative w-full bg-white pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20">
         <div className="relative px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
           {/* Section Header */}
           <motion.div
@@ -768,19 +832,19 @@ export default function Home() {
           >
             <div className="flex items-center justify-center gap-2 text-emerald-600 font-medium mb-4">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Properties</span>
+              <span>{t.properties}</span>
             </div>
             
             <h2
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight tracking-tight"
+              className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight tracking-tight"
             >
-              Discover inspiring designed homes.
+              {t.discoverHomes}
             </h2>
             
             <p
-              className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed"
+              className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed"
             >
-              Curated homes where elegance, style, and comfort unite.
+              {t.curated}
             </p>
           </motion.div>
 
@@ -812,19 +876,19 @@ export default function Home() {
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Serenity height villas</h3>
-                    <p className="text-sm text-gray-500">15 S Aurora Ave, Miami</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.serenityHeightVillas}</h3>
+                    <p className="text-xs text-gray-500">{t.serenityAddress}</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$570,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$570,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span>4 Bedrooms</span>
+                    <span>4 {t.bedrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span>3 Bathrooms</span>
+                    <span>3 {t.bathrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
@@ -844,7 +908,7 @@ export default function Home() {
             >
               <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
                 <Image
-                  src="/house_01.avif"
+                  src="/house_02.png"
                   alt="Mountain Retreat Villa"
                   fill
                   className="object-cover"
@@ -854,19 +918,19 @@ export default function Home() {
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Mountain Retreat Villa</h3>
-                    <p className="text-sm text-gray-500">18 S Aurora Ave, Miami</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.mountainRetreatVilla}</h3>
+                    <p className="text-xs text-gray-500">{t.mountainAddress}</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$575,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$575,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span>5 Bedrooms</span>
+                    <span>5 {t.bedrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span>2 Bathrooms</span>
+                    <span>2 {t.bathrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
@@ -886,7 +950,7 @@ export default function Home() {
             >
               <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
                 <Image
-                  src="/house_01.avif"
+                  src="/house_03.png"
                   alt="Vista Grand"
                   fill
                   className="object-cover"
@@ -896,19 +960,19 @@ export default function Home() {
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Vista Grand</h3>
-                    <p className="text-sm text-gray-500">Modern Luxe Villa</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.vistaGrand}</h3>
+                    <p className="text-xs text-gray-500">{t.vistaAddress}</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$580,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$580,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span>3 Bedrooms</span>
+                    <span>3 {t.bedrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span>4 Bathrooms</span>
+                    <span>4 {t.bathrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
@@ -928,7 +992,7 @@ export default function Home() {
             >
               <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
                 <Image
-                  src="/house_01.avif"
+                  src="/house_04.png"
                   alt="Maplewood Residence"
                   fill
                   className="object-cover"
@@ -938,19 +1002,19 @@ export default function Home() {
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Maplewood Residence</h3>
-                    <p className="text-sm text-gray-500">12 Emerald Heights, Los Angeles</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.maplewoodResidence}</h3>
+                    <p className="text-xs text-gray-500">{t.maplewoodAddress}</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$590,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$590,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span>6 Bedrooms</span>
+                    <span>6 {t.bedrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span>3 Bathrooms</span>
+                    <span>3 {t.bathrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
@@ -970,7 +1034,7 @@ export default function Home() {
             >
               <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
                 <Image
-                  src="/house_01.avif"
+                  src="/house_06.png"
                   alt="Whispering Pines"
                   fill
                   className="object-cover"
@@ -980,19 +1044,19 @@ export default function Home() {
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Whispering Pines</h3>
-                    <p className="text-sm text-gray-500">25 Skyline Boulevard, San Diego</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.whisperingPines}</h3>
+                    <p className="text-xs text-gray-500">{t.whisperingAddress}</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$710,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$710,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span>2 Bedrooms</span>
+                    <span>2 {t.bedrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span>1 Bathroom</span>
+                    <span>1 {t.bathrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
@@ -1012,7 +1076,7 @@ export default function Home() {
             >
               <div className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]">
                 <Image
-                  src="/house_01.avif"
+                  src="/house_05.png"
                   alt="The Catalyst Center"
                   fill
                   className="object-cover"
@@ -1022,19 +1086,19 @@ export default function Home() {
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">The Catalyst Center</h3>
-                    <p className="text-sm text-gray-500">18 Sapphire Bay Road, Naples</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.catalystCenter}</h3>
+                    <p className="text-xs text-gray-500">{t.catalystAddress}</p>
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap">$630,000</div>
+                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$630,000</div>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Bed className="w-4 h-4" />
-                    <span>4 Bedrooms</span>
+                    <span>4 {t.bedrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Bath className="w-4 h-4" />
-                    <span>2 Bathrooms</span>
+                    <span>2 {t.bathrooms}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Dot className="w-4 h-4" />
@@ -1048,7 +1112,7 @@ export default function Home() {
       </section>
 
       {/* Featured Property Section */}
-      <section className="relative w-full bg-white pt-20 pb-16 sm:pt-24 sm:pb-20 md:pt-32 md:pb-24">
+      <section className="relative w-full bg-white pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20">
         <div className="relative px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left Column - Image */}
@@ -1061,7 +1125,7 @@ export default function Home() {
             >
               <div className="relative h-[500px] w-full overflow-hidden rounded-2xl lg:h-[600px]">
                 <Image
-                  src="/house_01.avif"
+                  src="/house_02.png"
                   alt="Modern Luxe Villa"
                   fill
                   className="object-cover"
@@ -1089,14 +1153,14 @@ export default function Home() {
               {/* Header */}
               <div className="flex items-center gap-2 text-emerald-600 font-medium">
                 <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span>Featured property</span>
+                <span>{t.featured}</span>
               </div>
 
               {/* Title */}
               <h2
-                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight tracking-tight"
+                className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-tight tracking-tight"
               >
-                Modern Luxe Villa
+                {t.modernVilla}
               </h2>
 
               {/* Location */}
@@ -1104,46 +1168,46 @@ export default function Home() {
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
-                <span >20 S Aurora Ave, Miami</span>
+                <span className="text-sm">{t.address}</span>
               </div>
 
               {/* Description */}
               <p
-                className="text-base sm:text-lg text-gray-600 leading-relaxed"
+                className="text-sm sm:text-base text-gray-600 leading-relaxed"
               >
-                Experience luxury living at Modern Luxe Villa, located at 20 S Aurora Ave, Miami. Priced at $1,650,500, this 560 ft² smart home offers 4 bedrooms, 3 bathrooms, and spacious living areas. Enjoy energy efficiency, natural light, security systems, outdoor spaces, and 2 bar areas—perfect for 8+ guests. Built in 2025.
+                {t.description}
               </p>
 
               {/* Features Grid */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="flex items-center gap-3">
                   <Bed className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium">4 Bedrooms</span>
+                  <span className="text-gray-700 font-medium">4 {t.bedrooms}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Bath className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium">3 Bathrooms</span>
+                  <span className="text-gray-700 font-medium">3 {t.bathrooms}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Car className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium">Parking Space</span>
+                  <span className="text-gray-700 font-medium">{t.parkingSpace}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-gray-700 font-medium">2 Bar areas</span>
+                  <span className="text-gray-700 font-medium">2 {t.barAreas}</span>
                 </div>
               </div>
 
               {/* Call to Action and Price */}
               <div className="flex items-center justify-between pt-4">
-                <button className="px-8 py-4 bg-emerald-500 text-white font-semibold rounded-full shadow-lg hover:bg-emerald-600 transition-colors duration-300">
-                  Get in touch
+                <button className="px-6 py-3 bg-emerald-500 text-white font-semibold rounded-full shadow-lg hover:bg-emerald-600 transition-colors duration-300 text-sm sm:text-base">
+                  {t.getInTouchCta}
                 </button>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-gray-900">$1,650,500</div>
-                  <div className="text-sm text-gray-500">Discounted Price</div>
+                  <div className="text-2xl font-bold text-gray-900">$1,650,500</div>
+                  <div className="text-xs text-gray-500">{t.discountedPrice}</div>
                 </div>
               </div>
             </motion.div>
@@ -1167,13 +1231,13 @@ export default function Home() {
 
               {/* Tagline */}
               <div className="space-y-2">
-                <p className="text-white text-lg">Begin your path to success</p>
-                <p className="text-white text-lg">contact us today.</p>
+                <p className="text-white text-sm sm:text-base">{t.begin}</p>
+                <p className="text-white text-sm sm:text-base">{t.contactUs}</p>
               </div>
 
               {/* CTA Button */}
-              <button className="px-8 py-4 bg-emerald-500 text-white font-semibold rounded-lg shadow-lg hover:bg-emerald-600 transition-colors duration-300">
-                Get in touch
+              <button className="px-6 py-3 bg-emerald-500 text-white font-semibold rounded-lg shadow-lg hover:bg-emerald-600 transition-colors duration-300 text-sm sm:text-base">
+                {t.getInTouchCta}
               </button>
 
               {/* Social Media Icons */}
@@ -1203,11 +1267,11 @@ export default function Home() {
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <input
                     type="email"
-                    placeholder="Enter your email to subscribe"
-                    className="flex-1 px-4 py-3 bg-gray-800 text-white placeholder-gray-400 rounded-lg border border-gray-700 focus:border-emerald-500 focus:outline-none"
+                    placeholder={t.subscribe}
+                    className="flex-1 px-4 py-3 bg-gray-800 text-white placeholder-gray-400 rounded-lg border border-gray-700 focus:border-emerald-500 focus:outline-none text-sm"
                   />
-                  <button className="w-full px-6 py-3 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-600 transition-colors duration-300 sm:w-auto">
-                    Subscribe
+                  <button className="w-full px-5 py-3 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-600 transition-colors duration-300 sm:w-auto text-sm sm:text-base">
+                    {t.subscribeButton}
                   </button>
                 </div>
               </div>
@@ -1216,18 +1280,18 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-8">
                 {/* Left Column */}
                 <div className="space-y-3">
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Luxury Villas</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Residential Homes</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Apartments</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Contact Us</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">{t.luxuryVillas}</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">{t.residentialHomes}</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">{t.apartments}</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">{t.contact}</a>
                 </div>
 
                 {/* Right Column */}
                 <div className="space-y-3">
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Testimonials</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">Blog</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">FAQs</a>
-                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">404 Page</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">{t.testimonials}</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">{t.blog}</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">{t.faqs}</a>
+                  <a href="#" className="block text-white hover:text-emerald-400 transition-colors duration-300">{t.page404}</a>
                 </div>
               </div>
             </div>
@@ -1238,13 +1302,13 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               {/* Copyright */}
               <div className="text-white text-sm">
-                ©2025 Homely - Design & Developed by <span className="text-emerald-400">Elio Dev</span>
+                {t.copyright} <span className="text-emerald-400">{t.developer}</span>
               </div>
 
               {/* Legal Links */}
               <div className="flex items-center gap-4">
-                <a href="#" className="text-white hover:text-emerald-400 transition-colors duration-300 text-sm">Terms of service</a>
-                <a href="#" className="text-white hover:text-emerald-400 transition-colors duration-300 text-sm">Privacy policy</a>
+                <a href="#" className="text-white hover:text-emerald-400 transition-colors duration-300 text-sm">{t.terms}</a>
+                <a href="#" className="text-white hover:text-emerald-400 transition-colors duration-300 text-sm">{t.privacy}</a>
               </div>
             </div>
           </div>
