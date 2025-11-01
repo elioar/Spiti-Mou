@@ -12,9 +12,6 @@
 <div align="center">
   <img src="./public/Desktop_screenshoot.png" alt="Spiti Desktop Preview" width="100%" style="border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin: 20px 0;" />
   <p><em>Desktop view: Hero carousel, glassmorphism design, and premium listings</em></p>
-  
-  <img src="./public/Mobile_screenshoot.png" alt="Spiti Mobile Preview" width="50%" style="border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin: 20px 0;" />
-  <p><em>Mobile view: Responsive design with optimized carousel</em></p>
 </div>
 
 ---
