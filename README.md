@@ -10,8 +10,8 @@
 </div>
 
 <div align="center">
-  <img src="./public/Desktop_screenshoot.png" alt="Spiti Desktop Preview" width="100%" style="border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin: 20px 0;" />
-  <p><em>Desktop view: Hero carousel, glassmorphism design, and premium listings</em></p>
+  <img src="./public/Spiti-Mou_desktop_mobile_screenshot.png" alt="Spiti Desktop & Mobile Preview" width="100%" style="border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin: 20px 0;" />
+  <p><em>Desktop & Mobile views: Hero carousel, property listings, dark mode, and responsive design</em></p>
 </div>
 
 ---
@@ -21,13 +21,16 @@
 **Spiti** is a modern, luxury real estate platform for discovering dream homes in Athens and Greek islands. Combining premium design with cutting-edge technology.
 
 **Key Features:**
+- 🌓 Dark/Light mode toggle with system preference
 - 🎨 Premium design with glassmorphism effects
 - 🌍 Multilingual support (EN, ES, FR, EL)
 - 📱 Fully responsive across all devices
 - ⚡ Optimized performance with Next.js
 - 🎬 Smooth animations with Framer Motion
 - 🖼️ Auto-rotating hero carousel
-- 📊 Animated property statistics
+- 🏠 Redesigned property cards with hover effects
+- 🔍 Advanced search & filter system
+- 📄 Dedicated pages: Home, Properties, About, Contact
 
 ---
 
@@ -118,12 +121,15 @@ Full support for 4 languages:
 
 ## 🎨 Design Highlights
 
+- **Dark/Light Mode**: Seamless theme switching with localStorage persistence
 - **Hero Carousel**: Auto-rotating backgrounds with smooth transitions
 - **Glassmorphism**: Translucent cards with blur effects
-- **Animated Stats**: Property numbers synchronized with carousel
+- **Property Cards**: Modern design with badges, ratings, and hover effects
 - **Custom Scrollbar**: Emerald gradient with smooth tracking
+- **Search & Filters**: Advanced filtering sidebar on Properties page
 - **Responsive Grid**: Adaptive layouts for all screen sizes
-- **Hover Effects**: Interactive elements with scale and glow
+- **Hover Effects**: Interactive elements with scale and glow animations
+- **Contact Form**: Animated submit with success feedback
 
 ---
 
