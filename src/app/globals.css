@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -144,6 +146,10 @@ body {
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
 
+.dark .hover-glow:hover {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
 .text-gradient {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   -webkit-background-clip: text;
@@ -234,9 +240,17 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
+.dark .btn-menu:hover {
+  background-color: #374151;
+}
+
 .btn-menu:active {
   transform: translateY(0);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.dark .btn-menu:active {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Enhanced smooth scrolling with custom easing */

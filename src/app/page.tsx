@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight, Mail, X } from "lucide-react";
+import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight, Mail, X, Moon, Sun, MapPin, Square, Calendar, Star, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Lenis from "lenis";
@@ -9,6 +9,7 @@ import enTranslations from "@/translations/en.json";
 import esTranslations from "@/translations/es.json";
 import frTranslations from "@/translations/fr.json";
 import elTranslations from "@/translations/el.json";
+import { useTheme } from "@/components/ThemeProvider";
 
 declare global {
   interface Window {
@@ -37,11 +38,18 @@ function AnimatedNumber({ value, prefix = '', suffix = '', className = '' }: { v
 }
 
 export default function Home() {
+  const { theme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'el'>('en');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch for theme icon
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Hero background images - Desktop
   const heroImages = [
@@ -181,7 +189,7 @@ export default function Home() {
       >
         <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
           <div className={`flex items-center justify-between max-w-none mx-auto w-full transition-all duration-300 ${
-            isScrolled ? 'bg-white shadow-lg rounded-2xl px-6 py-4' : ''
+            isScrolled ? 'bg-white dark:bg-gray-900 shadow-lg rounded-2xl px-6 py-4' : ''
           }`}>
           {/* Left side - Logo */}
           <motion.div 
@@ -195,11 +203,11 @@ export default function Home() {
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
               className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 border-2 rounded-lg flex items-center justify-center transition-colors duration-300 ${
-                isScrolled ? 'border-black' : 'border-white'
+                isScrolled ? 'border-black dark:border-white' : 'border-white'
               }`}
             >
               <HomeIcon className={`w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 transition-colors duration-300 ${
-                isScrolled ? 'text-black' : 'text-white'
+                isScrolled ? 'text-black dark:text-white' : 'text-white'
               }`} />
             </motion.div>
             <motion.span
@@ -207,7 +215,7 @@ export default function Home() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
               className={`text-base font-semibold tracking-tight transition-colors duration-300 sm:text-lg md:text-xl ${
-                isScrolled ? 'text-black' : 'text-white'
+                isScrolled ? 'text-black dark:text-white' : 'text-white'
               }`}
             >
               Homely
@@ -228,11 +236,11 @@ export default function Home() {
               className="hidden sm:flex items-center gap-2 md:gap-3"
             >
               <Phone className={`w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 transition-colors duration-300 ${
-                isScrolled ? 'text-black' : 'text-white'
+                isScrolled ? 'text-black dark:text-white' : 'text-white'
               }`} />
               <span
                 className={`text-sm font-medium tracking-tight transition-colors duration-300 sm:text-sm md:text-base ${
-                  isScrolled ? 'text-black' : 'text-white'
+                  isScrolled ? 'text-black dark:text-white' : 'text-white'
                 }`}
               >
                 {t.phone}
@@ -243,33 +251,56 @@ export default function Home() {
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}
               className={`hidden sm:block w-px h-6 md:h-7 transition-colors duration-300 ${
-                isScrolled ? 'bg-gray-400' : 'bg-white'
+                isScrolled ? 'bg-gray-400 dark:bg-gray-600' : 'bg-white'
               }`}
             ></motion.div>
             
+            {/* Theme Toggle Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={toggleTheme}
+              className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 transition-all duration-300 ${
+                isScrolled 
+                  ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600' 
+                  : 'bg-white/10 backdrop-blur-sm border-white/20 hover:border-white/40'
+              }`}
+              suppressHydrationWarning
+            >
+              {mounted && theme === 'dark' ? (
+                <Sun className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors duration-300 ${
+                  isScrolled ? 'text-black dark:text-white' : 'text-white'
+                }`} />
+              ) : (
+                <Moon className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors duration-300 ${
+                  isScrolled ? 'text-black dark:text-white' : 'text-white'
+                }`} />
+              )}
+            </motion.button>
+
             {/* Language Selector Dropdown */}
             <motion.div 
               initial={{ x: 50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="relative mr-3 sm:mr-4"
+              className="relative"
             >
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                className={`flex items-center gap-2 px-3 py-1.5 sm:px-3 sm:py-2 rounded-full border-2 transition-all duration-300 ${
+                className={`flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 rounded-full border-2 transition-all duration-300 ${
                   isScrolled 
-                    ? 'bg-white border-gray-200 hover:border-gray-300 text-gray-800' 
+                    ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 text-gray-800 dark:text-gray-200' 
                     : 'bg-white/10 backdrop-blur-sm border-white/20 hover:border-white/40 text-white'
                 }`}
               >
-                <svg className="w-4 h-4 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
                 </svg>
-                <span className="text-xs font-semibold uppercase hidden sm:inline">{language}</span>
+                <span className="text-[10px] sm:text-xs font-semibold uppercase hidden sm:inline">{language}</span>
                 <svg 
-                  className={`w-3 h-3 sm:w-3 sm:h-3 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} 
+                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} 
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -292,7 +323,7 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-40"
+                    className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden z-40 transition-colors duration-300"
                   >
                     {[
                       { code: 'en', name: 'English', flag: '🇬🇧' },
@@ -306,8 +337,8 @@ export default function Home() {
                           setLanguage(lang.code as 'en' | 'es' | 'fr' | 'el');
                           setIsLangDropdownOpen(false);
                         }}
-                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-emerald-50 transition-colors duration-200 ${
-                          language === lang.code ? 'bg-emerald-100 text-emerald-700' : 'text-gray-700'
+                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors duration-200 ${
+                          language === lang.code ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'text-gray-700 dark:text-gray-300'
                         }`}
                       >
                         <span className="text-2xl">{lang.flag}</span>
@@ -329,16 +360,16 @@ export default function Home() {
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
               onClick={() => setIsMenuOpen(true)}
-              className={`btn-menu flex items-center gap-2 sm:gap-2 md:gap-3 rounded-full px-3 py-2 sm:px-4 sm:py-2 md:px-5 md:py-2.5 h-10 sm:h-11 md:h-12 transition-colors duration-300 ${
-                isScrolled ? 'bg-gray-200' : 'bg-white'
+              className={`btn-menu flex items-center gap-1.5 sm:gap-2 md:gap-3 rounded-full px-2.5 py-2 sm:px-4 sm:py-2 md:px-5 md:py-2.5 h-9 sm:h-11 md:h-12 transition-colors duration-300 ${
+                isScrolled ? 'bg-gray-200 dark:bg-gray-800' : 'bg-white'
               }`}
             >
               <Menu className={`w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 transition-colors duration-300 ${
-                isScrolled ? 'text-black' : 'text-gray-800'
+                isScrolled ? 'text-black dark:text-white' : 'text-gray-800'
               }`} />
               <span
-                className={`text-sm font-semibold tracking-tight transition-colors duration-300 sm:text-sm md:text-base ${
-                  isScrolled ? 'text-black' : 'text-gray-800'
+                className={`text-xs sm:text-sm font-semibold tracking-tight transition-colors duration-300 md:text-base ${
+                  isScrolled ? 'text-black dark:text-white' : 'text-gray-800'
                 }`}
               >
                 {t.menu}
@@ -457,7 +488,7 @@ export default function Home() {
             </motion.div>
           ))}
           {/* Dark overlay for better text visibility */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 dark:from-black/50 dark:via-black/30 dark:to-black/60" />
         </div>
 
         {/* Background Images Carousel - Mobile */}
@@ -483,7 +514,7 @@ export default function Home() {
             </motion.div>
           ))}
           {/* Dark overlay for better text visibility */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 dark:from-black/50 dark:via-black/30 dark:to-black/60" />
         </div>
         <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%] mx-auto relative z-10">
           {/* Content */}
@@ -776,7 +807,7 @@ export default function Home() {
         </motion.div>
 
         {/* Carousel Indicators */}
-        <div className="absolute bottom-2 left-1/2 sm:left-12 sm:bottom-16 transform -translate-x-1/2 sm:translate-x-0 z-10 flex gap-2">
+        <div className="absolute bottom-2 left-1/2 sm:left-4 md:left-8 lg:left-[10%] xl:left-[15%] sm:bottom-16 transform -translate-x-1/2 sm:translate-x-0 z-10 flex gap-2">
           {heroImages.map((_, index) => (
             <button
               key={index}
@@ -793,7 +824,7 @@ export default function Home() {
       </main>
 
       {/* Properties Section */}
-<section className="relative w-full bg-white pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20 overflow-hidden z-20">
+<section className="relative w-full bg-white dark:bg-gray-950 pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20 overflow-hidden z-20 transition-colors duration-300">
   {/* Background Accent Line */}
   <div className="absolute left-0 top-0 w-full h-full pointer-events-none">
     <svg
@@ -827,13 +858,13 @@ export default function Home() {
         </div>
 
         <h2
-          className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-tight tracking-tight"
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight transition-colors duration-300"
         >
           {t.exploreBest} <br className="hidden sm:block" /> {t.withExpert}
         </h2>
 
         <p
-          className="text-sm sm:text-base text-gray-600 max-w-md leading-relaxed"
+          className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-md leading-relaxed transition-colors duration-300"
         >
           {t.discover}
         </p>
@@ -866,8 +897,8 @@ export default function Home() {
         }}>
           {/* Top Right Button */}
           <div className="flex justify-end">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <ArrowRight className="w-6 h-6 text-black" />
+            <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <ArrowRight className="w-6 h-6 text-black dark:text-white transition-colors duration-300" />
             </div>
           </div>
           {/* Bottom Left Text */}
@@ -904,8 +935,8 @@ export default function Home() {
         }}>
           {/* Top Right Button */}
           <div className="flex justify-end">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <ArrowRight className="w-6 h-6 text-black" />
+            <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <ArrowRight className="w-6 h-6 text-black dark:text-white transition-colors duration-300" />
             </div>
           </div>
           {/* Bottom Left Text */}
@@ -933,8 +964,8 @@ export default function Home() {
         }}>
           {/* Top Right Button */}
           <div className="flex justify-end">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <ArrowRight className="w-6 h-6 text-black" />
+            <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <ArrowRight className="w-6 h-6 text-black dark:text-white transition-colors duration-300" />
             </div>
           </div>
           {/* Bottom Left Text */}
@@ -962,8 +993,8 @@ export default function Home() {
         }}>
           {/* Top Right Button */}
           <div className="flex justify-end">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <ArrowRight className="w-6 h-6 text-black" />
+            <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <ArrowRight className="w-6 h-6 text-black dark:text-white transition-colors duration-300" />
             </div>
           </div>
           {/* Bottom Left Text */}
@@ -978,7 +1009,7 @@ export default function Home() {
 </section>
 
       {/* Third Section - Property Cards */}
-      <section className="relative w-full bg-white pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20">
+      <section className="relative w-full bg-white dark:bg-gray-950 pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20 transition-colors duration-300">
         <div className="relative px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
           {/* Section Header */}
           <motion.div
@@ -994,13 +1025,13 @@ export default function Home() {
             </div>
             
             <h2
-              className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight tracking-tight"
+              className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight tracking-tight transition-colors duration-300"
             >
               {t.discoverHomes}
             </h2>
             
             <p
-              className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed"
+              className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed transition-colors duration-300"
             >
               {t.curated}
             </p>
@@ -1021,7 +1052,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
               whileHover={{ y: -8 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-gray-900 overflow-hidden hover:shadow-xl dark:hover:shadow-gray-800 transition-shadow duration-300 flex flex-col h-full sm:h-[520px] group cursor-pointer"
             >
               <motion.div 
                 className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
@@ -1035,27 +1066,54 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </motion.div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.serenityHeightVillas}</h3>
-                    <p className="text-xs text-gray-500">{t.serenityAddress}</p>
+                {/* Badge overlay */}
+                <div className="absolute top-3 left-3 flex gap-2">
+                  <div className="bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">For Sale</div>
+                  <div className="bg-white/90 backdrop-blur-sm text-emerald-600 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-current" />
+                    4.8
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$570,000</div>
                 </div>
-                <div className="flex items-center justify-between text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <Bed className="w-4 h-4" />
-                    <span>4 {t.bedrooms}</span>
+                {/* View Details button on hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <motion.button
+                    initial={{ y: 20 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="bg-white text-gray-900 px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg">
+                    View Details
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">{t.serenityHeightVillas}</h3>
+                  <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs mb-3">
+                    <MapPin className="w-3 h-3" />
+                    <span>{t.serenityAddress}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Bath className="w-4 h-4" />
-                    <span>3 {t.bathrooms}</span>
+                  <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mb-4">€570,000</div>
+                </div>
+                <div className="grid grid-cols-4 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex flex-col items-center gap-1">
+                    <Bed className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">4</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bedrooms}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Dot className="w-4 h-4" />
-                    <span>120m²</span>
+                  <div className="flex flex-col items-center gap-1">
+                    <Bath className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">3</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bathrooms}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Square className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">120</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">m²</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Car className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">2</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.parking}</span>
                   </div>
                 </div>
               </div>
@@ -1068,7 +1126,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
               whileHover={{ y: -8 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-gray-900 overflow-hidden hover:shadow-xl dark:hover:shadow-gray-800 transition-shadow duration-300 flex flex-col h-full sm:h-[520px] group cursor-pointer"
             >
               <motion.div 
                 className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
@@ -1082,27 +1140,52 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </motion.div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.mountainRetreatVilla}</h3>
-                    <p className="text-xs text-gray-500">{t.mountainAddress}</p>
+                <div className="absolute top-3 left-3 flex gap-2">
+                  <div className="bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">For Sale</div>
+                  <div className="bg-white/90 backdrop-blur-sm text-emerald-600 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-current" />
+                    4.9
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$575,000</div>
                 </div>
-                <div className="flex items-center justify-between text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <Bed className="w-4 h-4" />
-                    <span>5 {t.bedrooms}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <motion.button
+                    initial={{ y: 20 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="bg-white text-gray-900 px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg">
+                    View Details
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">{t.mountainRetreatVilla}</h3>
+                  <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs mb-3">
+                    <MapPin className="w-3 h-3" />
+                    <span>{t.mountainAddress}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Bath className="w-4 h-4" />
-                    <span>2 {t.bathrooms}</span>
+                  <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mb-4">€575,000</div>
+                </div>
+                <div className="grid grid-cols-4 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex flex-col items-center gap-1">
+                    <Bed className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">5</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bedrooms}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Dot className="w-4 h-4" />
-                    <span>150m²</span>
+                  <div className="flex flex-col items-center gap-1">
+                    <Bath className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">2</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bathrooms}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Square className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">150</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">m²</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Car className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">3</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.parking}</span>
                   </div>
                 </div>
               </div>
@@ -1115,7 +1198,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
               whileHover={{ y: -8 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-gray-900 overflow-hidden hover:shadow-xl dark:hover:shadow-gray-800 transition-shadow duration-300 flex flex-col h-full sm:h-[520px] group cursor-pointer"
             >
               <motion.div 
                 className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
@@ -1129,27 +1212,52 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </motion.div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.vistaGrand}</h3>
-                    <p className="text-xs text-gray-500">{t.vistaAddress}</p>
+                <div className="absolute top-3 left-3 flex gap-2">
+                  <div className="bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">For Sale</div>
+                  <div className="bg-white/90 backdrop-blur-sm text-emerald-600 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-current" />
+                    4.7
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$580,000</div>
                 </div>
-                <div className="flex items-center justify-between text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <Bed className="w-4 h-4" />
-                    <span>3 {t.bedrooms}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <motion.button
+                    initial={{ y: 20 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="bg-white text-gray-900 px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg">
+                    View Details
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">{t.vistaGrand}</h3>
+                  <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs mb-3">
+                    <MapPin className="w-3 h-3" />
+                    <span>{t.vistaAddress}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Bath className="w-4 h-4" />
-                    <span>4 {t.bathrooms}</span>
+                  <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mb-4">€580,000</div>
+                </div>
+                <div className="grid grid-cols-4 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex flex-col items-center gap-1">
+                    <Bed className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">3</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bedrooms}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Dot className="w-4 h-4" />
-                    <span>180m²</span>
+                  <div className="flex flex-col items-center gap-1">
+                    <Bath className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">4</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bathrooms}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Square className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">180</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">m²</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Car className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">2</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.parking}</span>
                   </div>
                 </div>
               </div>
@@ -1162,7 +1270,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
               whileHover={{ y: -8 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-gray-900 overflow-hidden hover:shadow-xl dark:hover:shadow-gray-800 transition-shadow duration-300 flex flex-col h-full sm:h-[520px] group cursor-pointer"
             >
               <motion.div 
                 className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
@@ -1176,27 +1284,52 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </motion.div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.maplewoodResidence}</h3>
-                    <p className="text-xs text-gray-500">{t.maplewoodAddress}</p>
+                <div className="absolute top-3 left-3 flex gap-2">
+                  <div className="bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">For Sale</div>
+                  <div className="bg-white/90 backdrop-blur-sm text-emerald-600 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-current" />
+                    5.0
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$590,000</div>
                 </div>
-                <div className="flex items-center justify-between text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <Bed className="w-4 h-4" />
-                    <span>6 {t.bedrooms}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <motion.button
+                    initial={{ y: 20 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="bg-white text-gray-900 px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg">
+                    View Details
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">{t.maplewoodResidence}</h3>
+                  <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs mb-3">
+                    <MapPin className="w-3 h-3" />
+                    <span>{t.maplewoodAddress}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Bath className="w-4 h-4" />
-                    <span>3 {t.bathrooms}</span>
+                  <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mb-4">€590,000</div>
+                </div>
+                <div className="grid grid-cols-4 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex flex-col items-center gap-1">
+                    <Bed className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">6</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bedrooms}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Dot className="w-4 h-4" />
-                    <span>200m²</span>
+                  <div className="flex flex-col items-center gap-1">
+                    <Bath className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">3</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bathrooms}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Square className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">200</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">m²</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Car className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">4</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.parking}</span>
                   </div>
                 </div>
               </div>
@@ -1209,7 +1342,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.5 }}
               whileHover={{ y: -8 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-gray-900 overflow-hidden hover:shadow-xl dark:hover:shadow-gray-800 transition-shadow duration-300 flex flex-col h-full sm:h-[520px] group cursor-pointer"
             >
               <motion.div 
                 className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
@@ -1223,27 +1356,52 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </motion.div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.whisperingPines}</h3>
-                    <p className="text-xs text-gray-500">{t.whisperingAddress}</p>
+                <div className="absolute top-3 left-3 flex gap-2">
+                  <div className="bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">For Sale</div>
+                  <div className="bg-white/90 backdrop-blur-sm text-emerald-600 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-current" />
+                    4.6
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$710,000</div>
                 </div>
-                <div className="flex items-center justify-between text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <Bed className="w-4 h-4" />
-                    <span>2 {t.bedrooms}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <motion.button
+                    initial={{ y: 20 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="bg-white text-gray-900 px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg">
+                    View Details
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">{t.whisperingPines}</h3>
+                  <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs mb-3">
+                    <MapPin className="w-3 h-3" />
+                    <span>{t.whisperingAddress}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Bath className="w-4 h-4" />
-                    <span>1 {t.bathrooms}</span>
+                  <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mb-4">€710,000</div>
+                </div>
+                <div className="grid grid-cols-4 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex flex-col items-center gap-1">
+                    <Bed className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">2</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bedrooms}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Dot className="w-4 h-4" />
-                    <span>90m²</span>
+                  <div className="flex flex-col items-center gap-1">
+                    <Bath className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">1</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bathrooms}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Square className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">90</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">m²</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Car className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">1</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.parking}</span>
                   </div>
                 </div>
               </div>
@@ -1256,7 +1414,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.6 }}
               whileHover={{ y: -8 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full sm:h-[500px]"
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-gray-900 overflow-hidden hover:shadow-xl dark:hover:shadow-gray-800 transition-shadow duration-300 flex flex-col h-full sm:h-[520px] group cursor-pointer"
             >
               <motion.div 
                 className="relative h-56 w-full overflow-hidden rounded-t-2xl sm:h-[320px]"
@@ -1270,27 +1428,52 @@ export default function Home() {
                   className="object-cover"
                   sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                 />
-              </motion.div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t.catalystCenter}</h3>
-                    <p className="text-xs text-gray-500">{t.catalystAddress}</p>
+                <div className="absolute top-3 left-3 flex gap-2">
+                  <div className="bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">For Sale</div>
+                  <div className="bg-white/90 backdrop-blur-sm text-emerald-600 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-current" />
+                    4.5
                   </div>
-                  <div className="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">$630,000</div>
                 </div>
-                <div className="flex items-center justify-between text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <Bed className="w-4 h-4" />
-                    <span>4 {t.bedrooms}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <motion.button
+                    initial={{ y: 20 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="bg-white text-gray-900 px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2 shadow-lg">
+                    View Details
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">{t.catalystCenter}</h3>
+                  <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs mb-3">
+                    <MapPin className="w-3 h-3" />
+                    <span>{t.catalystAddress}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Bath className="w-4 h-4" />
-                    <span>2 {t.bathrooms}</span>
+                  <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mb-4">€630,000</div>
+                </div>
+                <div className="grid grid-cols-4 gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex flex-col items-center gap-1">
+                    <Bed className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">4</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bedrooms}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Dot className="w-4 h-4" />
-                    <span>130m²</span>
+                  <div className="flex flex-col items-center gap-1">
+                    <Bath className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">2</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.bathrooms}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Square className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">130</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">m²</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <Car className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">1</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{t.parking}</span>
                   </div>
                 </div>
               </div>
@@ -1300,7 +1483,7 @@ export default function Home() {
       </section>
 
       {/* Featured Property Section */}
-      <section className="relative w-full bg-white pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20">
+      <section className="relative w-full bg-white dark:bg-gray-950 pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20 transition-colors duration-300">
         <div className="relative px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left Column - Image */}
@@ -1322,11 +1505,11 @@ export default function Home() {
               </div>
               {/* Pagination Dots */}
               <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                <div className="w-2 h-2 bg-white/50 rounded-full"></div>
-                <div className="w-2 h-2 bg-white/50 rounded-full"></div>
-                <div className="w-2 h-2 bg-white/50 rounded-full"></div>
-                <div className="w-2 h-2 bg-white/50 rounded-full"></div>
+                <div className="w-2 h-2 bg-white dark:bg-gray-300 rounded-full transition-colors duration-300"></div>
+                <div className="w-2 h-2 bg-white/50 dark:bg-gray-600 rounded-full transition-colors duration-300"></div>
+                <div className="w-2 h-2 bg-white/50 dark:bg-gray-600 rounded-full transition-colors duration-300"></div>
+                <div className="w-2 h-2 bg-white/50 dark:bg-gray-600 rounded-full transition-colors duration-300"></div>
+                <div className="w-2 h-2 bg-white/50 dark:bg-gray-600 rounded-full transition-colors duration-300"></div>
               </div>
             </motion.div>
 
@@ -1346,13 +1529,13 @@ export default function Home() {
 
               {/* Title */}
               <h2
-                className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-tight tracking-tight"
+                className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight transition-colors duration-300"
               >
                 {t.modernVilla}
               </h2>
 
               {/* Location */}
-              <div className="flex items-center gap-2 text-gray-600">
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 transition-colors duration-300">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
@@ -1361,7 +1544,7 @@ export default function Home() {
 
               {/* Description */}
               <p
-                className="text-sm sm:text-base text-gray-600 leading-relaxed"
+                className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed transition-colors duration-300"
               >
                 {t.description}
               </p>
@@ -1369,22 +1552,22 @@ export default function Home() {
               {/* Features Grid */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="flex items-center gap-3">
-                  <Bed className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium">4 {t.bedrooms}</span>
+                  <Bed className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-colors duration-300" />
+                  <span className="text-gray-700 dark:text-gray-300 font-medium transition-colors duration-300">4 {t.bedrooms}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Bath className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium">3 {t.bathrooms}</span>
+                  <Bath className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-colors duration-300" />
+                  <span className="text-gray-700 dark:text-gray-300 font-medium transition-colors duration-300">3 {t.bathrooms}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Car className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-700 font-medium">{t.parkingSpace}</span>
+                  <Car className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-colors duration-300" />
+                  <span className="text-gray-700 dark:text-gray-300 font-medium transition-colors duration-300">{t.parkingSpace}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-gray-700 font-medium">2 {t.barAreas}</span>
+                  <span className="text-gray-700 dark:text-gray-300 font-medium transition-colors duration-300">2 {t.barAreas}</span>
                 </div>
               </div>
 
@@ -1394,8 +1577,8 @@ export default function Home() {
                   {t.getInTouchCta}
                 </button>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-gray-900">$1,650,500</div>
-                  <div className="text-xs text-gray-500">{t.discountedPrice}</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">$1,650,500</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300">{t.discountedPrice}</div>
                 </div>
               </div>
             </motion.div>
