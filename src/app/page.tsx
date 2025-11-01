@@ -43,11 +43,18 @@ export default function Home() {
   const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'el'>('en');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // Hero background images
+  // Hero background images - Desktop
   const heroImages = [
     '/hero_background3.png',
-    '/hero_background4.png',
-    '/hero_background5.png'
+    '/hero_background5.png',
+    '/hero_background4.png'
+  ];
+
+  // Hero background images - Mobile
+  const heroImagesMobile = [
+    '/hero_background_mobile2.png',
+    '/hero_background_mobile.png',
+    '/hero_background_mobile3.png'
   ];
 
   // Property data for each image
@@ -453,21 +460,34 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40" />
         </div>
 
-        {/* Background Image - Mobile */}
-        <div className="absolute inset-0 min-h-screen block sm:hidden -z-10">
-          <Image
-            src="/hero_background_mobile.avif"
-            alt="Background"
-            fill
-            className="object-cover"
-            priority
-          />
+        {/* Background Images Carousel - Mobile */}
+        <div className="absolute inset-0 min-h-screen block sm:hidden -z-10 overflow-hidden">
+          {heroImagesMobile.map((src, index) => (
+            <motion.div
+              key={`mobile-${index}`}
+              initial={{ scale: 1.1, opacity: 0 }}
+              animate={{
+                scale: index === currentImageIndex ? 1 : 1.05,
+                opacity: index === currentImageIndex ? 1 : 0,
+              }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={src}
+                alt={`Background ${index + 1}`}
+                fill
+                className="object-cover"
+                priority={index === 0}
+              />
+            </motion.div>
+          ))}
           {/* Dark overlay for better text visibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40" />
         </div>
         <div className="w-full px-4 sm:px-8 md:px-16 lg:px-[10%] xl:px-[15%] mx-auto relative z-10">
           {/* Content */}
-          <div className="max-w-3xl space-y-4 sm:space-y-5 md:space-y-6">
+          <div className="space-y-3 sm:space-y-4 md:space-y-5 lg:max-w-3xl lg:space-y-6">
             <motion.div 
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -516,7 +536,7 @@ export default function Home() {
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 1.2 }}
-              className="text-white/90 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed"
+              className="text-white/90 text-xs sm:text-sm md:text-base lg:text-lg lg:max-w-2xl leading-relaxed"
             >
               <motion.span
                 key={`desc-${language}`}
@@ -594,8 +614,8 @@ export default function Home() {
           transition={{ duration: 1, delay: 1.8, ease: "easeOut" }}
           className="absolute bottom-6 left-4 right-4 sm:bottom-8 sm:left-auto sm:right-8 md:right-16 lg:right-[10%] xl:right-[15%] z-10"
         >
-          <div className="rounded-2xl bg-white/95 backdrop-blur-sm shadow-xl overflow-hidden">
-            <div className="px-3 py-3 sm:px-5 sm:py-4 md:px-6 md:py-5">
+          <div className="rounded-3xl bg-white/80 backdrop-blur-xl border border-white/20 shadow-2xl overflow-hidden">
+            <div className="px-4 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6">
               
               {/* Mobile Layout - 2 rows */}
               <div className="flex flex-col gap-2 sm:hidden">
@@ -604,54 +624,54 @@ export default function Home() {
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5, delay: 2.0 }}
-                    whileHover={{ scale: 1.05 }}
-                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors flex-1"
+                    whileHover={{ scale: 1.08, y: -2 }}
+                    className="relative flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gradient-to-br from-emerald-50/50 to-white/50 backdrop-blur-sm border border-emerald-200/30 hover:border-emerald-300 transition-all flex-1 group"
                   >
-                    <Bed className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                    <div className="flex flex-col min-w-0">
+                    {/* Glow effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 to-transparent opacity-0 group-hover:opacity-100 rounded-xl transition-opacity" />
+                    <Bed className="relative h-5 w-5 text-emerald-600 flex-shrink-0 z-10" />
+                    <div className="relative flex flex-col min-w-0 z-10">
                       <AnimatedNumber 
                         value={propertyData[currentImageIndex].beds} 
-                        className="text-xs font-bold text-gray-900 leading-none"
+                        className="text-base font-extrabold text-gray-900 leading-none"
                       />
-                      <span className="text-[10px] text-gray-500 leading-tight">{t.beds}</span>
+                      <span className="text-[11px] text-gray-600 font-medium mt-0.5">{t.beds}</span>
                     </div>
                   </motion.div>
-                  
-                  <div className="h-8 w-px bg-gray-200"></div>
                   
                   <motion.div
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5, delay: 2.1 }}
-                    whileHover={{ scale: 1.05 }}
-                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors flex-1"
+                    whileHover={{ scale: 1.08, y: -2 }}
+                    className="relative flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gradient-to-br from-blue-50/50 to-white/50 backdrop-blur-sm border border-blue-200/30 hover:border-blue-300 transition-all flex-1 group"
                   >
-                    <Bath className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                    <div className="flex flex-col min-w-0">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-transparent opacity-0 group-hover:opacity-100 rounded-xl transition-opacity" />
+                    <Bath className="relative h-5 w-5 text-blue-600 flex-shrink-0 z-10" />
+                    <div className="relative flex flex-col min-w-0 z-10">
                       <AnimatedNumber 
                         value={propertyData[currentImageIndex].baths} 
-                        className="text-xs font-bold text-gray-900 leading-none"
+                        className="text-base font-extrabold text-gray-900 leading-none"
                       />
-                      <span className="text-[10px] text-gray-500 leading-tight">{t.baths}</span>
+                      <span className="text-[11px] text-gray-600 font-medium mt-0.5">{t.baths}</span>
                     </div>
                   </motion.div>
-                  
-                  <div className="h-8 w-px bg-gray-200"></div>
                   
                   <motion.div
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.5, delay: 2.2 }}
-                    whileHover={{ scale: 1.05 }}
-                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors flex-1"
+                    whileHover={{ scale: 1.08, y: -2 }}
+                    className="relative flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gradient-to-br from-purple-50/50 to-white/50 backdrop-blur-sm border border-purple-200/30 hover:border-purple-300 transition-all flex-1 group"
                   >
-                    <Car className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                    <div className="flex flex-col min-w-0">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-transparent opacity-0 group-hover:opacity-100 rounded-xl transition-opacity" />
+                    <Car className="relative h-5 w-5 text-purple-600 flex-shrink-0 z-10" />
+                    <div className="relative flex flex-col min-w-0 z-10">
                       <AnimatedNumber 
                         value={propertyData[currentImageIndex].parking} 
-                        className="text-xs font-bold text-gray-900 leading-none"
+                        className="text-base font-extrabold text-gray-900 leading-none"
                       />
-                      <span className="text-[10px] text-gray-500 leading-tight">{t.parking}</span>
+                      <span className="text-[11px] text-gray-600 font-medium mt-0.5">{t.parking}</span>
                     </div>
                   </motion.div>
                 </div>
@@ -660,93 +680,94 @@ export default function Home() {
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, delay: 2.3 }}
-                  whileHover={{ scale: 1.02 }}
-                  className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 hover:from-emerald-100 hover:to-emerald-200 transition-colors"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  className="relative flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-green-600 shadow-lg hover:shadow-xl transition-all group overflow-hidden"
                 >
-                  <div className="flex flex-col text-center">
+                  {/* Animated background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                  <div className="relative flex flex-col text-center z-10">
                     <AnimatedNumber 
                       value={propertyData[currentImageIndex].price} 
-                      prefix="$"
-                      className="text-sm font-bold text-gray-900 leading-none"
+                      prefix="€"
+                      className="text-lg font-extrabold text-white leading-none"
                     />
-                    <span className="text-[10px] text-emerald-700 font-medium mt-0.5">{t.forSale}</span>
+                    <span className="text-[11px] text-emerald-100 font-semibold mt-0.5">{t.forSale}</span>
                   </div>
                 </motion.div>
               </div>
 
               {/* Tablet & Desktop Layout - Single Line */}
-              <div className="hidden sm:flex items-center gap-3 md:gap-4 lg:gap-6">
+              <div className="hidden sm:flex items-center gap-3 md:gap-4 lg:gap-5">
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, delay: 2.0 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-2 px-2 py-2 md:px-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  whileHover={{ scale: 1.1, y: -3 }}
+                  className="relative flex items-center gap-2.5 px-4 py-3 md:px-5 rounded-xl bg-gradient-to-br from-emerald-50/60 to-white/60 backdrop-blur-sm border border-emerald-200/30 hover:border-emerald-300 transition-all group"
                 >
-                  <Bed className="h-5 w-5 text-emerald-600" />
-                  <div className="flex flex-col">
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 to-transparent opacity-0 group-hover:opacity-100 rounded-xl transition-opacity" />
+                  <Bed className="relative h-6 w-6 text-emerald-600 z-10" />
+                  <div className="relative flex flex-col z-10">
                     <AnimatedNumber 
                       value={propertyData[currentImageIndex].beds} 
-                      className="text-sm md:text-base font-bold text-gray-900 leading-none"
+                      className="text-lg md:text-xl font-extrabold text-gray-900 leading-none"
                     />
-                    <span className="text-xs text-gray-500">{t.beds}</span>
+                    <span className="text-xs text-gray-600 font-medium mt-0.5">{t.beds}</span>
                   </div>
                 </motion.div>
-                
-                <div className="h-8 w-px bg-gray-200"></div>
                 
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, delay: 2.1 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-2 px-2 py-2 md:px-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  whileHover={{ scale: 1.1, y: -3 }}
+                  className="relative flex items-center gap-2.5 px-4 py-3 md:px-5 rounded-xl bg-gradient-to-br from-blue-50/60 to-white/60 backdrop-blur-sm border border-blue-200/30 hover:border-blue-300 transition-all group"
                 >
-                  <Bath className="h-5 w-5 text-emerald-600" />
-                  <div className="flex flex-col">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-transparent opacity-0 group-hover:opacity-100 rounded-xl transition-opacity" />
+                  <Bath className="relative h-6 w-6 text-blue-600 z-10" />
+                  <div className="relative flex flex-col z-10">
                     <AnimatedNumber 
                       value={propertyData[currentImageIndex].baths} 
-                      className="text-sm md:text-base font-bold text-gray-900 leading-none"
+                      className="text-lg md:text-xl font-extrabold text-gray-900 leading-none"
                     />
-                    <span className="text-xs text-gray-500">{t.baths}</span>
+                    <span className="text-xs text-gray-600 font-medium mt-0.5">{t.baths}</span>
                   </div>
                 </motion.div>
-                
-                <div className="h-8 w-px bg-gray-200"></div>
                 
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, delay: 2.2 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-2 px-2 py-2 md:px-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  whileHover={{ scale: 1.1, y: -3 }}
+                  className="relative flex items-center gap-2.5 px-4 py-3 md:px-5 rounded-xl bg-gradient-to-br from-purple-50/60 to-white/60 backdrop-blur-sm border border-purple-200/30 hover:border-purple-300 transition-all group"
                 >
-                  <Car className="h-5 w-5 text-emerald-600" />
-                  <div className="flex flex-col">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-transparent opacity-0 group-hover:opacity-100 rounded-xl transition-opacity" />
+                  <Car className="relative h-6 w-6 text-purple-600 z-10" />
+                  <div className="relative flex flex-col z-10">
                     <AnimatedNumber 
                       value={propertyData[currentImageIndex].parking} 
-                      className="text-sm md:text-base font-bold text-gray-900 leading-none"
+                      className="text-lg md:text-xl font-extrabold text-gray-900 leading-none"
                     />
-                    <span className="text-xs text-gray-500">{t.parking}</span>
+                    <span className="text-xs text-gray-600 font-medium mt-0.5">{t.parking}</span>
                   </div>
                 </motion.div>
-                
-                <div className="h-8 w-px bg-gray-200"></div>
                 
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, delay: 2.3 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-2 px-3 py-2 md:px-4 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 hover:from-emerald-100 hover:to-emerald-200 transition-colors"
+                  whileHover={{ scale: 1.05, y: -3 }}
+                  className="relative flex items-center gap-3 px-5 py-3 md:px-6 md:py-4 rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-green-600 shadow-lg hover:shadow-xl transition-all group overflow-hidden"
                 >
-                  <div className="flex flex-col">
+                  {/* Animated background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                  <div className="relative flex flex-col z-10">
                     <AnimatedNumber 
                       value={propertyData[currentImageIndex].price} 
-                      prefix="$"
-                      className="text-base md:text-lg font-bold text-gray-900 leading-none"
+                      prefix="€"
+                      className="text-xl md:text-2xl font-extrabold text-white leading-none"
                     />
-                    <span className="text-xs text-emerald-700 font-medium mt-0.5">{t.forSale}</span>
+                    <span className="text-xs text-emerald-100 font-semibold mt-1">{t.forSale}</span>
                   </div>
                 </motion.div>
               </div>
@@ -755,7 +776,7 @@ export default function Home() {
         </motion.div>
 
         {/* Carousel Indicators */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 flex gap-2">
+        <div className="absolute bottom-2 left-1/2 sm:left-12 sm:bottom-16 transform -translate-x-1/2 sm:translate-x-0 z-10 flex gap-2">
           {heroImages.map((_, index) => (
             <button
               key={index}
