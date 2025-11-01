@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight, Mail, X, Moon, Sun, MapPin, Square, Calendar, Star, TrendingUp } from "lucide-react";
+import { Home as HomeIcon, Phone, Menu, Bed, Bath, Car, Dot, ArrowRight, Mail, X, Moon, Sun, MapPin, Square, Calendar, Star, TrendingUp, Check, Send, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Lenis from "lenis";
@@ -45,6 +45,8 @@ export default function Home() {
   const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'el'>('en');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [email, setEmail] = useState('');
 
   // Prevent hydration mismatch for theme icon
   useEffect(() => {
@@ -81,6 +83,7 @@ export default function Home() {
   };
 
   const t = translations[language];
+
 
   useEffect(() => {
     // Initialize Lenis smooth scroll
@@ -192,11 +195,12 @@ export default function Home() {
             isScrolled ? 'bg-white dark:bg-gray-900 shadow-lg rounded-2xl px-6 py-4' : ''
           }`}>
           {/* Left side - Logo */}
-          <motion.div 
+          <motion.a
+            href="/"
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex items-center gap-2 sm:gap-3 md:gap-4"
+            className="flex items-center gap-2 sm:gap-3 md:gap-4 cursor-pointer"
           >
             <motion.div 
               whileHover={{ scale: 1.1, rotate: 5 }}
@@ -220,7 +224,7 @@ export default function Home() {
             >
               Homely
             </motion.span>
-          </motion.div>
+          </motion.a>
           
           {/* Right side - Phone and Menu */}
           <motion.div 
@@ -427,17 +431,22 @@ export default function Home() {
 
               {/* Menu Links */}
               <div className="space-y-6">
-                {t.menuItems.map((item, index) => (
+                {[
+                  { label: t.home, href: '/' },
+                  { label: t.propertiesNav, href: '/#properties' },
+                  { label: t.about, href: '/about' },
+                  { label: t.contact, href: '/contact' }
+                ].map((item, index) => (
                   <motion.a
-                    key={item}
-                    href="#"
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setIsMenuOpen(false)}
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
                     className="block text-white text-3xl sm:text-4xl font-bold hover:text-emerald-400 transition-colors duration-300 group"
-                    
                   >
-                    <span className="inline-block group-hover:translate-x-2 transition-transform duration-300">{item}</span>
+                    <span className="inline-block group-hover:translate-x-2 transition-transform duration-300">{item.label}</span>
                   </motion.a>
                 ))}
               </div>
@@ -824,7 +833,7 @@ export default function Home() {
       </main>
 
       {/* Properties Section */}
-<section className="relative w-full bg-white dark:bg-gray-950 pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20 overflow-hidden z-20 transition-colors duration-300">
+<section id="properties" className="relative w-full bg-white dark:bg-gray-950 pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-24 md:pb-20 overflow-hidden z-20 transition-colors duration-300">
   {/* Background Accent Line */}
   <div className="absolute left-0 top-0 w-full h-full pointer-events-none">
     <svg
@@ -1636,14 +1645,73 @@ export default function Home() {
               {/* Newsletter Subscription */}
               <div className="space-y-4">
                 <div className="flex flex-col gap-3 sm:flex-row">
-                  <input
+                  <motion.input
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder={t.subscribe}
-                    className="flex-1 px-4 py-3 bg-gray-800 text-white placeholder-gray-400 rounded-lg border border-gray-700 focus:border-emerald-500 focus:outline-none text-sm"
+                    disabled={isSubscribed}
+                    className={`flex-1 px-4 py-3 bg-gray-800 text-white placeholder-gray-400 rounded-lg border border-gray-700 focus:border-emerald-500 focus:outline-none text-sm transition-all duration-300 ${
+                      isSubscribed ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   />
-                  <button className="w-full px-5 py-3 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-600 transition-colors duration-300 sm:w-auto text-sm sm:text-base">
-                    {t.subscribeButton}
-                  </button>
+                  <motion.button
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                    onClick={() => {
+                      if (email && !isSubscribed) {
+                        setIsSubscribed(true);
+                        setTimeout(() => {
+                          setIsSubscribed(false);
+                          setEmail('');
+                        }, 3000);
+                      }
+                    }}
+                    disabled={isSubscribed}
+                    className={`relative w-full px-5 py-3 text-white font-semibold rounded-lg sm:w-auto text-sm sm:text-base overflow-hidden transition-all duration-300 ${
+                      isSubscribed 
+                        ? 'bg-emerald-600 cursor-not-allowed' 
+                        : 'bg-emerald-500 hover:bg-emerald-600'
+                    }`}
+                    whileHover={!isSubscribed ? { scale: 1.05 } : {}}
+                    whileTap={!isSubscribed ? { scale: 0.95 } : {}}
+                  >
+                    {isSubscribed ? (
+                      <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex items-center justify-center gap-2"
+                      >
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                        >
+                          <Check className="w-5 h-5" />
+                        </motion.div>
+                        <span>Subscribed!</span>
+                        <motion.div
+                          initial={{ scale: 0, rotate: -180 }}
+                          animate={{ scale: [0, 1.2, 1], rotate: 0 }}
+                          transition={{ delay: 0.2, duration: 0.6 }}
+                          className="absolute inset-0 pointer-events-none"
+                        >
+                          <Sparkles className="w-full h-full text-white opacity-20" />
+                        </motion.div>
+                      </motion.span>
+                    ) : (
+                      <span className="flex items-center justify-center gap-2">
+                        {t.subscribeButton}
+                        <Send className="w-4 h-4" />
+                      </span>
+                    )}
+                  </motion.button>
                 </div>
               </div>
 
